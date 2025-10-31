@@ -1,0 +1,33 @@
+{
+  "name": "ccmp",
+  "version": "1.0.0",
+  "description": "Anthem's Claude Code Marketplace - A curated collection of skills and plugins for Claude Code",
+  "main": "index.js",
+  "scripts": {
+    "sync": "node scripts/sync-marketplace.js",
+    "sync-marketplace": "node scripts/sync-marketplace.js",
+    "validate": "node scripts/sync-marketplace.js && echo 'Validation passed!'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/ccmp.git"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "plugins",
+    "marketplace",
+    "skills",
+    "ai",
+    "productivity"
+  ],
+  "author": {
+    "name": "username",
+    "email": "[email protected]"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/username/ccmp/issues"
+  },
+  "homepage": "https://github.com/username/ccmp#readme"
+}

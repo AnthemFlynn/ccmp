@@ -1,0 +1,53 @@
+{
+  "name": "Anthem's Claude Code Marketplace",
+  "id": "username/ccmp",
+  "version": "1.0.0",
+  "description": "Anthem's Claude Code Marketplace - A curated collection of skills and plugins for Claude Code",
+  "author": {
+    "name": "username",
+    "email": "[email protected]"
+  },
+  "repository": "https://github.com/username/ccmp",
+  "plugins": [
+    {
+      "name": "claude-context-manager",
+      "source": "./plugins/claude-context-manager",
+      "description": "Autonomous context management for codebases through claude.md files with monitoring, staleness detection, and intelligent updates",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": [
+        "context",
+        "claude.md",
+        "documentation",
+        "automation",
+        "codebase-intelligence"
+      ],
+      "author": {
+        "name": "username",
+        "email": "[email protected]"
+      },
+      "repository": "https://github.com/username/ccmp",
+      "license": "MIT"
+    },
+    {
+      "name": "session-management",
+      "source": "./plugins/session-management",
+      "description": "Git-native session lifecycle management with context preservation, checkpoint tracking, and seamless handoffs between coding sessions",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": [
+        "git",
+        "sessions",
+        "workflow",
+        "context",
+        "checkpoints"
+      ],
+      "author": {
+        "name": "username",
+        "email": "[email protected]"
+      },
+      "repository": "https://github.com/username/ccmp",
+      "license": "MIT"
+    }
+  ]
+}
