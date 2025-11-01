@@ -29,3 +29,11 @@ temp/
 
 # CCMP integration state (local only)
 .ccmp/state.json
+
+# Session management (local only)
+.session/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo

@@ -18,6 +18,16 @@ from typing import List, Dict, Set
 import subprocess
 import re
 
+# Add lib to path for integration imports
+repo_root = Path(__file__).resolve().parents[6]  # Go up to repo root
+sys.path.insert(0, str(repo_root / "lib"))
+
+try:
+    from ccmp_integration import CCMPIntegration, is_session_active
+    INTEGRATION_AVAILABLE = True
+except ImportError:
+    INTEGRATION_AVAILABLE = False
+
 def get_recent_changes(dir_path: Path, since_days: int = 30) -> Dict:
     """Get summary of recent changes in directory."""
     try:
@@ -314,10 +324,31 @@ def main():
         print("\nUpdating context file...")
         if update_context_file(context_file, suggestions, existing_context):
             print(f"✅ Updated: {context_file}")
+
+            # BIDIRECTIONAL SYNC: Notify session if active
+            if INTEGRATION_AVAILABLE and is_session_active():
+                try:
+                    integration = CCMPIntegration()
+                    session_state = integration.get_state("session-management")
+
+                    if session_state:
+                        print(f"\n📝 Active session detected - context update logged")
+                        print(f"   Session: {session_state.get('branch', 'unknown')}")
+                        print(f"   Updated: {dir_path.relative_to(repo_root)}/claude.md")
+
+                        # Update context manager state
+                        integration.update_state("claude-context-manager", {
+                            "last_update": datetime.now().isoformat(),
+                            "last_updated_path": str(dir_path.relative_to(repo_root))
+                        })
+                except Exception as e:
+                    # Don't fail the whole update if logging fails
+                    if args.verbose:
+                        print(f"   (Session logging failed: {e})")
         else:
             print(f"❌ Failed to update: {context_file}")
             sys.exit(1)
-    
+
     sys.exit(0 if update_analysis['should_update'] else 0)
 
 if __name__ == '__main__':

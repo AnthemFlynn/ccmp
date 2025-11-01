@@ -28,6 +28,19 @@ For detailed command reference, see references/commands.md
 import argparse
 import sys
 from pathlib import Path
+import subprocess
+
+# Add lib to path for integration imports
+repo_root = Path(__file__).resolve().parents[5]  # Go up to repo root
+sys.path.insert(0, str(repo_root / "lib"))
+
+try:
+    from session_integration import SessionIntegration
+    from ccmp_integration import CCMPIntegration, is_session_active, is_tdd_mode
+    INTEGRATION_AVAILABLE = True
+except ImportError:
+    INTEGRATION_AVAILABLE = False
+    print("⚠️  Integration libraries not found. Running in standalone mode.")
 
 def check_session_initialized():
     """Check if session management is initialized"""
@@ -37,90 +50,252 @@ def check_session_initialized():
         return False
     return True
 
+def get_current_branch():
+    """Get current git branch"""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return None
+
+def get_changed_directories():
+    """Get directories with changes since last commit"""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        files = result.stdout.strip().split('\n')
+        directories = set()
+        for file in files:
+            if file:
+                directories.add(Path(file).parent)
+        return list(directories)
+    except subprocess.CalledProcessError:
+        return []
+
 def cmd_start(args):
     """Start new session"""
     if not check_session_initialized():
         return 1
-    
-    print(f"Starting session: {args.branch}")
+
+    # Checkout or create branch
+    try:
+        subprocess.run(["git", "checkout", args.branch], check=True, capture_output=True)
+    except subprocess.CalledProcessError:
+        # Branch doesn't exist, create it
+        try:
+            subprocess.run(["git", "checkout", "-b", args.branch], check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to create branch: {e}")
+            return 1
+
+    # Parse objectives (can be comma-separated)
+    objectives = []
     if args.objective:
-        print(f"Objective: {args.objective}")
-    
-    # Implementation would:
-    # 1. Create or checkout git branch
-    # 2. Initialize session directory in .git/sessions/<branch>/
-    # 3. Load project context from .session/
-    # 4. Generate agent brief
-    # 5. Display user brief
-    
+        objectives = [obj.strip() for obj in args.objective.split(',')]
+
+    # Determine mode
+    mode = "tdd" if args.tdd else "normal"
+
+    if INTEGRATION_AVAILABLE:
+        # Use integrated session start
+        integration = SessionIntegration()
+        brief = integration.start_session(args.branch, objectives, mode)
+        print(brief)
+    else:
+        # Fallback: Basic session start
+        print(f"🚀 SESSION STARTED")
+        print("=" * 60)
+        print(f"Branch: {args.branch}")
+        print(f"Mode: {mode.upper()}")
+        if objectives:
+            print("\n📋 OBJECTIVES:")
+            for i, obj in enumerate(objectives, 1):
+                print(f"  {i}. {obj}")
+        print("\n" + "=" * 60)
+
     return 0
 
 def cmd_resume(args):
     """Resume existing session"""
     if not check_session_initialized():
         return 1
-    
-    print("Resuming session...")
-    
-    # Implementation would:
-    # 1. Detect current git branch
-    # 2. Load session context
-    # 3. Analyze git history since last session
-    # 4. Generate comprehensive brief
-    # 5. Display status
-    
+
+    # Get branch to resume
+    branch = args.branch if args.branch else get_current_branch()
+    if not branch:
+        print("❌ Not in a git repository")
+        return 1
+
+    # Checkout branch if specified
+    if args.branch:
+        try:
+            subprocess.run(["git", "checkout", branch], check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to checkout branch: {e}")
+            return 1
+
+    if INTEGRATION_AVAILABLE:
+        # Load session state from integration
+        integration = CCMPIntegration()
+        session_state = integration.get_state("session-management")
+
+        if session_state and session_state.get("active"):
+            # Resume with full context
+            session_int = SessionIntegration()
+            brief = session_int.start_session(
+                branch,
+                session_state.get("objectives", []),
+                session_state.get("mode", "normal")
+            )
+            print(brief)
+        else:
+            print(f"⚠️  No active session found for {branch}")
+            print("Start a new session with: python session.py start <branch> --objective \"...\"")
+    else:
+        print(f"Resuming session on branch: {branch}")
+
     return 0
 
 def cmd_checkpoint(args):
     """Create checkpoint"""
     if not check_session_initialized():
         return 1
-    
-    print("Creating checkpoint...")
-    if args.label:
-        print(f"Label: {args.label}")
-    
-    # Implementation would:
-    # 1. Capture current state
-    # 2. Analyze code changes
-    # 3. Update progress metrics
-    # 4. Create enhanced git commit
-    # 5. Save checkpoint metadata
-    
+
+    label = args.label or "checkpoint"
+
+    if INTEGRATION_AVAILABLE:
+        # Get changed directories for context health check
+        changed_dirs = get_changed_directories()
+
+        # Use integrated checkpoint with context health
+        session_int = SessionIntegration()
+        checkpoint_msg = session_int.checkpoint(label, changed_dirs)
+        print(checkpoint_msg)
+
+        # If TDD mode, update TDD state
+        if is_tdd_mode():
+            if args.tdd_phase:
+                integration = CCMPIntegration()
+                tdd_state = integration.get_state("tdd-workflow") or {}
+                cycles = tdd_state.get("cycles_today", 0)
+
+                if args.tdd_phase == "GREEN":
+                    cycles += 1
+
+                integration.update_state("tdd-workflow", {
+                    "active": True,
+                    "cycles_today": cycles,
+                    "current_phase": args.tdd_phase,
+                    "discipline_score": 100  # Would calculate based on violations
+                })
+                print(f"\n🧪 TDD: {args.tdd_phase} phase checkpoint created")
+                if args.tdd_phase == "GREEN":
+                    print(f"   Cycles completed today: {cycles}")
+    else:
+        print(f"✅ Checkpoint created: {label}")
+
+    # Create git commit if there are changes
+    try:
+        # Check if there are changes to commit
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--quiet"],
+            capture_output=True
+        )
+        if result.returncode != 0:  # There are staged changes
+            commit_msg = args.message or f"checkpoint: {label}"
+            subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+            print(f"📝 Git commit created")
+    except subprocess.CalledProcessError:
+        pass  # No changes to commit
+
     return 0
 
 def cmd_end(args):
     """End session"""
     if not check_session_initialized():
         return 1
-    
-    print("Ending session...")
-    
-    # Implementation would:
-    # 1. Final state capture
-    # 2. Calculate session metrics
-    # 3. Generate handoff document
-    # 4. Archive session data
-    # 5. Optional: merge to target branch
-    
+
+    if INTEGRATION_AVAILABLE:
+        # Use integrated session end with handoff
+        session_int = SessionIntegration()
+        handoff = session_int.end_session(generate_handoff=args.handoff)
+        print(handoff)
+    else:
+        print("Session ended.")
+
+    # Optional: merge to target branch
+    if args.merge_to:
+        try:
+            current_branch = get_current_branch()
+            subprocess.run(["git", "checkout", args.merge_to], check=True)
+            subprocess.run(["git", "merge", current_branch], check=True)
+            print(f"\n✅ Merged to {args.merge_to}")
+        except subprocess.CalledProcessError as e:
+            print(f"\n❌ Merge failed: {e}")
+            return 1
+
     return 0
 
 def cmd_status(args):
     """Show session status"""
     if not check_session_initialized():
         return 1
-    
-    print("Session Status")
-    print("=" * 50)
-    
-    # Implementation would display:
-    # - Current objectives and progress
-    # - Active blockers
-    # - Recent changes
-    # - Time in session
-    # - Quality metrics
-    # - Next recommended actions
-    
+
+    branch = get_current_branch()
+    print("📊 Session Status")
+    print("=" * 60)
+    print(f"Branch: {branch}")
+
+    if INTEGRATION_AVAILABLE:
+        integration = CCMPIntegration()
+        session_state = integration.get_state("session-management")
+
+        if session_state and session_state.get("active"):
+            print(f"Status: ✅ Active")
+            print(f"Mode: {session_state.get('mode', 'normal').upper()}")
+
+            # Show objectives
+            objectives = session_state.get("objectives", [])
+            if objectives:
+                print("\n📋 OBJECTIVES:")
+                for i, obj in enumerate(objectives, 1):
+                    print(f"  {i}. {obj}")
+
+            # Show TDD metrics if in TDD mode
+            if is_tdd_mode():
+                tdd_state = integration.get_state("tdd-workflow")
+                if tdd_state:
+                    print("\n🧪 TDD METRICS:")
+                    print(f"  Cycles today: {tdd_state.get('cycles_today', 0)}")
+                    print(f"  Current phase: {tdd_state.get('current_phase', 'N/A')}")
+                    print(f"  Discipline score: {tdd_state.get('discipline_score', 100)}/100")
+
+            # Show context health
+            context_state = integration.get_state("claude-context-manager")
+            if context_state:
+                health_score = context_state.get("health_score")
+                if health_score is not None:
+                    print("\n🏥 CONTEXT HEALTH:")
+                    print(f"  Overall score: {health_score}/100")
+                    critical = context_state.get("critical_files", [])
+                    if critical:
+                        print(f"  ⚠️  {len(critical)} files need attention")
+        else:
+            print("Status: ⚪ No active session")
+            print("Start a session with: python session.py start <branch> --objective \"...\"")
+    else:
+        print("Status: ⚠️  Integration not available")
+
+    print("=" * 60)
     return 0
 
 def cmd_history(args):
@@ -190,7 +365,8 @@ def main():
     # start command
     start_parser = subparsers.add_parser("start", help="Start new session")
     start_parser.add_argument("branch", help="Branch name")
-    start_parser.add_argument("--objective", help="Session objective")
+    start_parser.add_argument("--objective", help="Session objective (comma-separated for multiple)")
+    start_parser.add_argument("--tdd", action="store_true", help="Enable TDD mode")
     start_parser.add_argument("--resume", action="store_true", help="Resume if exists")
     start_parser.set_defaults(func=cmd_start)
     
@@ -204,6 +380,7 @@ def main():
     checkpoint_parser.add_argument("--label", help="Checkpoint label")
     checkpoint_parser.add_argument("--message", help="Commit message")
     checkpoint_parser.add_argument("--decision", help="Record decision")
+    checkpoint_parser.add_argument("--tdd-phase", choices=["RED", "GREEN", "REFACTOR"], help="TDD phase for this checkpoint")
     checkpoint_parser.set_defaults(func=cmd_checkpoint)
     
     # end command
