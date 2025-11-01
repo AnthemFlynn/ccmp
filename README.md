@@ -13,6 +13,7 @@ claude-code marketplace add AnthemFlynn/ccmp
 # Install a plugin
 claude-code plugin add AnthemFlynn/ccmp/claude-context-manager
 claude-code plugin add AnthemFlynn/ccmp/session-management
+claude-code plugin add AnthemFlynn/ccmp/tdd-workflow
 ```
 
 ### Manual Installation
@@ -63,6 +64,24 @@ Git-native session lifecycle management with context preservation, checkpoint tr
 - AI agent onboarding
 
 [View Documentation](./plugins/session-management/README.md)
+
+---
+
+### ⭐ TDD Workflow
+
+**Category:** Testing
+**Version:** 1.0.0
+
+Test-Driven Development workflow with RED-GREEN-REFACTOR enforcement, session integration, automatic checkpoints, and metrics tracking.
+
+**Features:**
+- RED-GREEN-REFACTOR cycle enforcement
+- Automatic TDD checkpoints (with session-management)
+- Test metrics and coverage tracking
+- Rationalization detection (catches TDD shortcuts)
+- Works standalone or with session-management
+
+[View Documentation](./plugins/tdd-workflow/README.md)
 
 ---
 
