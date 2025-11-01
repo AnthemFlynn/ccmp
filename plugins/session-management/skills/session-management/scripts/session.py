@@ -37,6 +37,7 @@ sys.path.insert(0, str(repo_root / "lib"))
 try:
     from session_integration import SessionIntegration
     from ccmp_integration import CCMPIntegration, is_session_active, is_tdd_mode
+    from tdd_analyzer import TDDAnalyzer
     INTEGRATION_AVAILABLE = True
 except ImportError:
     INTEGRATION_AVAILABLE = False
@@ -173,33 +174,44 @@ def cmd_checkpoint(args):
     label = args.label or "checkpoint"
 
     if INTEGRATION_AVAILABLE:
-        # Get changed directories for context health check
-        changed_dirs = get_changed_directories()
-
-        # Use integrated checkpoint with context health
         session_int = SessionIntegration()
-        checkpoint_msg = session_int.checkpoint(label, changed_dirs)
-        print(checkpoint_msg)
 
-        # If TDD mode, update TDD state
-        if is_tdd_mode():
-            if args.tdd_phase:
+        # If TDD GREEN checkpoint, use special handler
+        if is_tdd_mode() and args.tdd_phase == "GREEN":
+            # GREEN checkpoint with automatic test context update
+            green_msg = session_int.tdd_green_checkpoint(label)
+            print(green_msg)
+
+            # Update TDD state
+            integration = CCMPIntegration()
+            tdd_state = integration.get_state("tdd-workflow") or {}
+            cycles = tdd_state.get("cycles_today", 0) + 1
+
+            integration.update_state("tdd-workflow", {
+                "active": True,
+                "cycles_today": cycles,
+                "current_phase": "GREEN",
+                "discipline_score": 100
+            })
+            print(f"\n🎯 TDD Cycles completed today: {cycles}")
+        else:
+            # Regular checkpoint with context health check
+            changed_dirs = get_changed_directories()
+            checkpoint_msg = session_int.checkpoint(label, changed_dirs)
+            print(checkpoint_msg)
+
+            # If TDD mode (non-GREEN), update TDD state
+            if is_tdd_mode() and args.tdd_phase:
                 integration = CCMPIntegration()
                 tdd_state = integration.get_state("tdd-workflow") or {}
-                cycles = tdd_state.get("cycles_today", 0)
-
-                if args.tdd_phase == "GREEN":
-                    cycles += 1
 
                 integration.update_state("tdd-workflow", {
                     "active": True,
-                    "cycles_today": cycles,
+                    "cycles_today": tdd_state.get("cycles_today", 0),
                     "current_phase": args.tdd_phase,
-                    "discipline_score": 100  # Would calculate based on violations
+                    "discipline_score": 100
                 })
                 print(f"\n🧪 TDD: {args.tdd_phase} phase checkpoint created")
-                if args.tdd_phase == "GREEN":
-                    print(f"   Cycles completed today: {cycles}")
     else:
         print(f"✅ Checkpoint created: {label}")
 
@@ -347,7 +359,7 @@ def cmd_decisions(args):
     """Log decisions"""
     if not check_session_initialized():
         return 1
-    
+
     if args.action == "add":
         print(f"Recording decision: {args.text}")
         if args.rationale:
@@ -355,7 +367,39 @@ def cmd_decisions(args):
     elif args.action == "list":
         print("Decisions:")
         # List decisions
-    
+
+    return 0
+
+def cmd_analyze(args):
+    """Analyze session metrics"""
+    if not check_session_initialized():
+        return 1
+
+    if INTEGRATION_AVAILABLE and is_tdd_mode():
+        # Run TDD analysis
+        analyzer = TDDAnalyzer()
+
+        print("🔍 Analyzing TDD discipline...")
+        print()
+
+        # Analyze commits
+        commit_analysis = analyzer.analyze_session_commits()
+        print(analyzer.generate_violation_report(commit_analysis))
+
+        # Analyze cycle timing
+        cycle_analysis = analyzer.analyze_tdd_cycle_timing()
+        if cycle_analysis["total_cycles"] > 0:
+            print("⏱️  TDD Cycle Timing:")
+            print(f"  • Total cycles: {cycle_analysis['total_cycles']}")
+            print(f"  • Average cycle time: {cycle_analysis['average_cycle_time']:.1f} minutes")
+            print(f"  • Fastest cycle: {cycle_analysis['fastest_cycle']:.1f} minutes")
+            print(f"  • Slowest cycle: {cycle_analysis['slowest_cycle']:.1f} minutes")
+            print()
+    else:
+        print("Session Analysis")
+        print("=" * 50)
+        print("Analysis features available in TDD mode with integration enabled")
+
     return 0
 
 def main():
@@ -420,7 +464,11 @@ def main():
     decisions_parser.add_argument("text", nargs="?", help="Decision text")
     decisions_parser.add_argument("--rationale", help="Decision rationale")
     decisions_parser.set_defaults(func=cmd_decisions)
-    
+
+    # analyze command
+    analyze_parser = subparsers.add_parser("analyze", help="Analyze session metrics")
+    analyze_parser.set_defaults(func=cmd_analyze)
+
     args = parser.parse_args()
     
     if not args.command:
