@@ -10,6 +10,32 @@
   "repository": "https://github.com/AnthemFlynn/ccmp",
   "plugins": [
     {
+      "name": "workflow-suite",
+      "source": "./plugins/workflow-suite",
+      "description": "Complete integrated development workflow: context management + sessions + TDD. Auto-loading context, real-time health monitoring, pattern discovery, and comprehensive handoffs. Install once, get exponential value. [Pre-release: Experimental]",
+      "version": "0.0.5",
+      "category": "productivity",
+      "keywords": [
+        "workflow",
+        "context",
+        "sessions",
+        "tdd",
+        "integration",
+        "automation",
+        "context-management",
+        "session-management",
+        "test-driven-development",
+        "pattern-discovery"
+      ],
+      "author": {
+        "name": "AnthemFlynn",
+        "email": "AnthemFlynn@users.noreply.github.com"
+      },
+      "repository": "https://github.com/AnthemFlynn/ccmp",
+      "license": "MIT",
+      "featured": true
+    },
+    {
       "name": "claude-context-manager",
       "source": "./plugins/claude-context-manager",
       "description": "Autonomous context management through claude.md files. Auto-loads in sessions, monitors health in real-time, updates on checkpoints. Works standalone or integrated with session-management for exponential value.",
@@ -29,7 +55,7 @@
       },
       "repository": "https://github.com/AnthemFlynn/ccmp",
       "license": "MIT",
-      "featured": true
+      "featured": false
     },
     {
       "name": "session-management",
@@ -52,7 +78,7 @@
       },
       "repository": "https://github.com/AnthemFlynn/ccmp",
       "license": "MIT",
-      "featured": true
+      "featured": false
     },
     {
       "name": "tdd-workflow",
@@ -75,7 +101,7 @@
       },
       "repository": "https://github.com/AnthemFlynn/ccmp",
       "license": "MIT",
-      "featured": true
+      "featured": false
     }
   ]
 }
