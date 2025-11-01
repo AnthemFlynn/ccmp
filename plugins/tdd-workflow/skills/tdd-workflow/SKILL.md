@@ -419,12 +419,56 @@ Otherwise → not TDD
 
 No exceptions without your human partner's permission.
 
-## Session-Management Detection
+## CCMP Plugin Integration
 
-I automatically detect if session-management is active by checking:
+TDD workflow **automatically integrates** with other CCMP plugins via `.ccmp/state.json`:
+
+### Integration Detection (Modern API)
+```python
+from lib.ccmp_integration import is_session_active, is_tdd_mode
+
+if is_session_active():
+    # Enhanced TDD mode with session integration
+    pass
+```
+
+**Legacy detection** (still supported):
 1. `.git/sessions/<branch>/` directory exists
 2. Session config has TDD objective or `--tdd` flag
 3. `session.py` commands available
+
+### With session-management 🔄
+**Automatic activation:**
+```bash
+python scripts/session.py start feature/auth --tdd
+# → TDD workflow detects via integration API
+# → Enhanced mode activates automatically
+```
+
+**TDD metrics in sessions:**
+- Cycles completed tracked in session state
+- Session status shows TDD discipline score
+- Handoffs include test coverage metrics
+
+### With claude-context-manager 📚
+**Test context updates:**
+When TDD GREEN checkpoints succeed:
+- Can trigger `tests/*/claude.md` updates
+- Documents discovered test patterns
+- Keeps test strategy current
+
+**Integration example:**
+```python
+from lib.ccmp_integration import CCMPIntegration
+
+integration = CCMPIntegration()
+integration.update_state("tdd-workflow", {
+    "active": True,
+    "cycles_today": 5,
+    "current_phase": "GREEN",
+    "discipline_score": 100
+})
+```
 
 **If detected:** Enhanced TDD mode with automatic checkpoints and metrics.
 

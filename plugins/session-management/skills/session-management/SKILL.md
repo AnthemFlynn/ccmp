@@ -347,11 +347,70 @@ python scripts/init_session.py --force
 cat .session/config.yaml
 ```
 
+## CCMP Plugin Integration
+
+Session management **automatically integrates** with other CCMP plugins:
+
+### With claude-context-manager 📚
+**Auto-loads relevant context on session start:**
+```bash
+python scripts/session.py start feature/auth
+# → Automatically loads src/auth/claude.md
+# → Shows context health warnings
+# → Includes patterns and gotchas in brief
+```
+
+**Checkpoints trigger context health checks:**
+```bash
+python scripts/session.py checkpoint --label "api-complete"
+# → Detects src/api/ changed
+# → Warns if context is stale
+# → Offers: "Update context? [y/N]"
+```
+
+**Handoffs include context health:**
+```bash
+python scripts/session.py end --handoff
+# → Includes context health score
+# → Lists files needing updates
+# → Recommends maintenance for next session
+```
+
+### With tdd-workflow 🧪
+**TDD mode automatically enhances sessions:**
+```bash
+python scripts/session.py start feature/auth --tdd
+# → TDD workflow detects and activates
+# → Automatic RED-GREEN-REFACTOR checkpoints
+# → TDD metrics in session status
+# → Test coverage tracking
+```
+
+**Session analysis detects TDD:**
+```bash
+python scripts/session.py analyze
+# → Shows TDD cycles completed
+# → Detects commits without tests
+# → Reports discipline violations
+```
+
+### Integration API
+Uses `.ccmp/state.json` for plugin coordination. See `lib/ccmp_integration.py` for details.
+
+**Developers:** Import the integration library:
+```python
+from lib.ccmp_integration import CCMPIntegration
+
+integration = CCMPIntegration()
+if integration.is_active("session-management"):
+    session = integration.get_state("session-management")
+```
+
 ## Integration Notes
 
 Session management is designed to work with:
 - **Git** (required) - Source of truth for history
-- **Issue Trackers** (optional) - Link blockers to tickets  
+- **Issue Trackers** (optional) - Link blockers to tickets
 - **CI/CD** (optional) - Include build status in briefings
 - **Coverage Tools** (optional) - Track quality metrics
 

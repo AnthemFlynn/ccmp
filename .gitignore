@@ -26,3 +26,6 @@ temp/
 
 # Claude Code cache
 .claude/cache/
+
+# CCMP integration state (local only)
+.ccmp/state.json

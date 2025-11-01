@@ -445,6 +445,38 @@ We migrated from MySQL to PostgreSQL in 2023.
 **Migrations**: prisma/migrations/
 ```
 
+## CCMP Plugin Integration
+
+Context manager **automatically integrates** with other CCMP plugins:
+
+### With session-management 🔄
+**Sessions load relevant context automatically:**
+When a session starts, relevant `claude.md` files are loaded based on objectives.
+
+**Context health in session handoffs:**
+Session handoffs include context health reports and update recommendations.
+
+**Checkpoints trigger health checks:**
+Session checkpoints automatically check if changed directories have stale context.
+
+**To enable:** Use `lib/session_integration.py` in your session workflow.
+
+### With tdd-workflow 🧪
+**TDD cycles update test context:**
+When TDD GREEN checkpoints succeed, test documentation can be auto-updated with discovered patterns.
+
+**Integration API:**
+```python
+from lib.ccmp_integration import CCMPIntegration
+
+integration = CCMPIntegration()
+integration.update_state("claude-context-manager", {
+    "health_score": 87,
+    "last_scan": "2025-11-01T10:00:00Z",
+    "critical_files": ["src/api/"]
+})
+```
+
 ## Integration with Development
 
 ### As You Code
