@@ -8,18 +8,18 @@ A curated collection of skills and plugins for Claude Code, featuring tools for 
 
 ```bash
 # Add the marketplace to your Claude Code configuration
-claude-code marketplace add username/ccmp
+claude-code marketplace add AnthemFlynn/ccmp
 
 # Install a plugin
-claude-code plugin add username/ccmp/claude-context-manager
-claude-code plugin add username/ccmp/session-management
+claude-code plugin add AnthemFlynn/ccmp/claude-context-manager
+claude-code plugin add AnthemFlynn/ccmp/session-management
 ```
 
 ### Manual Installation
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/username/ccmp.git
+   git clone https://github.com/AnthemFlynn/ccmp.git
    ```
 
 2. Copy desired plugins to your Claude Code plugins directory:
@@ -107,7 +107,7 @@ ccmp/
      "description": "Your plugin description",
      "author": {
        "name": "Your Name",
-       "email": "[email protected]"
+       "email": "AnthemFlynn@users.noreply.github.com"
      },
      "category": "productivity",
      "keywords": ["keyword1", "keyword2"],
@@ -132,7 +132,7 @@ ccmp/
      "keywords": ["keyword1", "keyword2"],
      "author": {
        "name": "Your Name",
-       "email": "[email protected]"
+       "email": "AnthemFlynn@users.noreply.github.com"
      },
      "featured": false
    }
@@ -206,9 +206,9 @@ MIT License - See individual plugin directories for specific licenses.
 
 ## 🙋 Support
 
-- **Issues:** [GitHub Issues](https://github.com/username/ccmp/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/username/ccmp/discussions)
+- **Issues:** [GitHub Issues](https://github.com/AnthemFlynn/ccmp/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/AnthemFlynn/ccmp/discussions)
 
 ---
 
-**Maintained by username** • [GitHub](https://github.com/username) • [Email]([email protected])
+**Maintained by AnthemFlynn** • [GitHub](https://github.com/AnthemFlynn) • [Email](AnthemFlynn@users.noreply.github.com)

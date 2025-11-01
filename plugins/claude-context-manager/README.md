@@ -18,7 +18,7 @@ This plugin enables Claude to work as an autonomous **context manager** for code
 ### From Marketplace
 
 ```bash
-claude-code plugin add username/ccmp/claude-context-manager
+claude-code plugin add AnthemFlynn/ccmp/claude-context-manager
 ```
 
 ### Manual Installation

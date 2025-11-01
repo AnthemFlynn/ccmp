@@ -22,7 +22,7 @@ Session management enhances git workflows by:
 ### From Marketplace
 
 ```bash
-claude-code plugin add username/ccmp/session-management
+claude-code plugin add AnthemFlynn/ccmp/session-management
 ```
 
 ### Manual Installation

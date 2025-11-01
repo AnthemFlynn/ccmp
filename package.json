@@ -4,13 +4,13 @@
   "description": "Anthem's Claude Code Marketplace - A curated collection of skills and plugins for Claude Code",
   "main": "index.js",
   "scripts": {
-    "sync": "node scripts/sync-marketplace.js",
-    "sync-marketplace": "node scripts/sync-marketplace.js",
-    "validate": "node scripts/sync-marketplace.js && echo 'Validation passed!'"
+    "sync": "python3 scripts/sync-marketplace.py",
+    "sync-marketplace": "python3 scripts/sync-marketplace.py",
+    "validate": "python3 scripts/sync-marketplace.py && echo 'Validation passed!'"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/username/ccmp.git"
+    "url": "git+https://github.com/AnthemFlynn/ccmp.git"
   },
   "keywords": [
     "claude",
@@ -22,12 +22,12 @@
     "productivity"
   ],
   "author": {
-    "name": "username",
-    "email": "[email protected]"
+    "name": "AnthemFlynn",
+    "email": "AnthemFlynn@users.noreply.github.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/username/ccmp/issues"
+    "url": "https://github.com/AnthemFlynn/ccmp/issues"
   },
-  "homepage": "https://github.com/username/ccmp#readme"
+  "homepage": "https://github.com/AnthemFlynn/ccmp#readme"
 }
