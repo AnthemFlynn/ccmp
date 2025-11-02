@@ -1,6 +1,9 @@
 {
   "name": "ccmp",
-  "owner": "AnthemFlynn",
+  "owner": {
+    "name": "AnthemFlynn",
+    "email": "AnthemFlynn@users.noreply.github.com"
+  },
   "id": "AnthemFlynn/ccmp",
   "version": "2.0.0",
   "description": "Integrated plugins for Claude Code that work together seamlessly. Features context management, session workflows, and TDD with automatic pattern discovery. Install all three for exponential value.",
