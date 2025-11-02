@@ -41,11 +41,29 @@ These skills **amplify each other**:
 claude-code plugin add AnthemFlynn/ccmp/workflow-suite
 ```
 
+**Plugin Location:** After installation, the plugin will be at:
+```
+~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/
+```
+
+**Running Commands:** All commands in this documentation should be run from your **project root directory** (where your `.git` directory is), not from the plugin directory. The scripts will automatically find the plugin's `lib/` directory.
+
+**Tip:** Create a shell alias for convenience:
+```bash
+echo 'alias ws-session="python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/skills/session-management/scripts/session.py"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Then use: `ws-session start feature/my-feature --tdd`
+
 ### Your First Integrated Session
 
 ```bash
+# Navigate to your project directory
+cd /path/to/your/project
+
 # Start a TDD session (activates all three skills)
-python plugins/workflow-suite/skills/session-management/scripts/session.py start feature/payment --tdd --objective "Add Stripe integration"
+python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/skills/session-management/scripts/session.py start feature/payment --tdd --objective "Add Stripe integration"
 
 # Integration provides automatically:
 # ✅ Loads relevant claude.md context files
@@ -54,7 +72,7 @@ python plugins/workflow-suite/skills/session-management/scripts/session.py start
 # ✅ Sets up checkpoint tracking
 
 # Create GREEN checkpoint (magic happens here!)
-python plugins/workflow-suite/skills/session-management/scripts/session.py checkpoint --label "stripe-webhook" --tdd-phase GREEN
+python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/skills/session-management/scripts/session.py checkpoint --label "stripe-webhook" --tdd-phase GREEN
 
 # Automatically:
 # ✅ Analyzes test patterns
@@ -134,17 +152,19 @@ Manager   Workflow
 
 ## Example Workflows
 
+**Note:** Examples below use `ws-session` alias (see Quick Start for setup). Replace with full path if not using alias.
+
 ### Complete TDD Session with Auto-Documentation
 
 ```bash
 # Morning: Start integrated TDD session
-python skills/session-management/scripts/session.py start feature/payment --tdd
+ws-session start feature/payment --tdd
 
 # Work: Write test (RED)
-python skills/session-management/scripts/session.py checkpoint --label "red-webhook" --tdd-phase RED
+ws-session checkpoint --label "red-webhook" --tdd-phase RED
 
 # Work: Implement code (GREEN)
-python skills/session-management/scripts/session.py checkpoint --label "green-webhook" --tdd-phase GREEN
+ws-session checkpoint --label "green-webhook" --tdd-phase GREEN
 
 # Magic happens:
 # ✅ Test patterns analyzed
@@ -154,10 +174,10 @@ python skills/session-management/scripts/session.py checkpoint --label "green-we
 # ✅ Git commit created
 
 # Check discipline
-python skills/session-management/scripts/session.py analyze
+ws-session analyze
 
 # End session with full handoff
-python skills/session-management/scripts/session.py end
+ws-session end
 ```
 
 ---
@@ -167,8 +187,8 @@ python skills/session-management/scripts/session.py end
 ### Real-Time Context Monitoring
 
 ```bash
-# Start monitor daemon
-python lib/context_monitor.py --watch --interval 300
+# Start monitor daemon (run from project root)
+python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/lib/context_monitor.py --watch --interval 300
 
 # Checks every 5 minutes:
 # - Context health score
@@ -179,8 +199,8 @@ python lib/context_monitor.py --watch --interval 300
 ### TDD Violation Detection
 
 ```bash
-# Analyze git history for TDD anti-patterns
-python lib/tdd_analyzer.py
+# Analyze git history for TDD anti-patterns (run from project root)
+python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/lib/tdd_analyzer.py
 
 # Detects:
 # - Source changes without tests
@@ -191,8 +211,8 @@ python lib/tdd_analyzer.py
 ### Test Pattern Discovery
 
 ```bash
-# Analyze test directory
-python lib/test_pattern_analyzer.py tests/
+# Analyze test directory (run from project root)
+python3 ~/.claude-code/plugins/AnthemFlynn/ccmp/workflow-suite/lib/test_pattern_analyzer.py tests/
 
 # Discovers:
 # - Frameworks used

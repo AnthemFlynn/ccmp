@@ -1,75 +1,164 @@
-# Session Management
+# Session Management Skill
 
-Git-native session lifecycle management with context preservation, checkpoint tracking, and seamless handoffs between coding sessions.
+A complete, production-ready skill for git-native session lifecycle management in software development.
 
-## Description
+## What You Got
 
-Manage coding sessions with git-native workflows, intelligent context preservation, and seamless agent onboarding.
+You have a proper `.skill` file that can be installed in Claude:
 
-## Core Concept
+**`session-management.skill`** - A complete skill package containing:
+- SKILL.md with comprehensive instructions
+- Python scripts for session management
+- Reference documentation
+- Configuration and template files
+
+## Installation
+
+### For Claude Desktop
+
+1. Locate your Claude skills directory:
+   - **macOS**: `~/Library/Application Support/Claude/skills/`
+   - **Windows**: `%APPDATA%\Claude\skills\`
+   - **Linux**: `~/.config/Claude/skills/`
+
+2. Copy the `.skill` file to the skills directory:
+   ```bash
+   cp session-management.skill ~/Library/Application\ Support/Claude/skills/
+   ```
+
+3. Restart Claude or reload skills
+
+The skill will automatically be available in Claude conversations.
+
+## What This Skill Does
+
+Session Management provides git-native session lifecycle management for coding:
+
+**Core Features:**
+- Start/resume coding sessions with full context
+- Create checkpoints with enhanced commits
+- Track objectives, blockers, and decisions
+- Generate comprehensive handoffs between sessions
+- Provide instant context loading for AI agents
+
+**When Claude Uses This:**
+- When you start/resume coding sessions
+- When creating checkpoints during work
+- When tracking progress, objectives, or blockers
+- When generating handoffs between sessions
+- When AI agents need project context
+
+## Quick Start (After Installation)
+
+Once installed, you can ask Claude things like:
+
+```
+"Help me set up session management in my project"
+
+"Start a new session for feature/user-auth with objective: implement JWT authentication"
+
+"Create a checkpoint labeled 'oauth-complete'"
+
+"Show me the current session status"
+
+"End this session and generate a handoff"
+```
+
+Claude will use the skill automatically and guide you through the process.
+
+## What's Included in the Skill
+
+### Scripts (`scripts/`)
+- **init_session.py** - Initialize session management in a project
+- **session.py** - Main CLI for all session operations
+
+### References (`references/`)
+- **commands.md** - Complete command reference
+- **config-reference.md** - All configuration options
+- **handoff-template.md** - Template for session handoffs
+
+### Assets (`assets/`)
+- **config-template.yaml** - Default configuration template
+- **architecture-template.md** - Architecture documentation template
+- **conventions-template.md** - Code conventions template
+
+## Key Concepts
 
 **Sessions = Branches + Context**
 
-Session management enhances git workflows by:
+The skill enhances git workflows by:
 - Mapping branches to work sessions with objectives
 - Creating enhanced commits with decision metadata
 - Tracking progress, blockers, and architectural decisions
 - Generating comprehensive handoffs between sessions
 - Providing instant context loading for AI agents
 
-## Installation
+## Storage Structure
 
-### From Marketplace
+When initialized in a project:
 
-```bash
-claude-code plugin add AnthemFlynn/ccmp/session-management
+```
+your-project/
+├── .session/                # Git-tracked, shared
+│   ├── config.yaml         # Configuration
+│   ├── architecture.md     # Architecture docs
+│   └── conventions.md      # Code conventions
+│
+└── .git/
+    └── sessions/           # Local, not tracked
+        └── <branch>/
+            ├── objectives.md
+            ├── blockers.md
+            └── context.json
 ```
 
-### Manual Installation
+## Generic & Universal
 
-1. Clone this repository
-2. Copy `plugins/session-management` to your Claude Code plugins directory
-3. Restart Claude Code
+This skill is completely generic and not tied to any specific:
+- Architecture pattern (works with any)
+- Programming language (language-agnostic)
+- Team or workflow (adapts to yours)
+- Project type (any software project)
 
-## Quick Start
+You customize it by editing the `.session/` configuration files in your project.
 
-### Initialize in Project
+## Technical Details
 
-```bash
-python scripts/init_session.py
-```
+**Implementation**: Python 3.7+
+**Dependencies**: Git (required), standard library only
+**Platform**: Cross-platform (Linux, macOS, Windows)
 
-Creates `.session/` directory with:
-- `config.yaml` - Session configuration
-- `architecture.md` - Project architecture (edit for your project)
-- `conventions.md` - Code conventions (edit for your project)
+**Skill Type**: Workflow & Tool Integration
+**Progressive Disclosure**: SKILL.md (core), references/ (detailed), scripts/ (executable)
 
-### Start a Session
+## Next Steps
 
-```bash
-# New feature session
-python scripts/session.py start feature/new-feature --objective "Build user authentication"
+1. **Install the skill** in Claude (see Installation above)
+2. **Try it out**: Ask Claude to help you initialize session management
+3. **Customize**: Edit `.session/config.yaml` for your project
+4. **Use it**: Start your first session and see how it works
 
-# Resume existing
-python scripts/session.py resume
-```
+## Validation
 
-### Create Checkpoints
+This skill was created following the official Claude skill-creator patterns:
+- ✅ Proper YAML frontmatter
+- ✅ Concise SKILL.md (under 500 lines)
+- ✅ Progressive disclosure with bundled resources
+- ✅ Generic and universal design
+- ✅ Validated and packaged with official tools
 
-```bash
-# Save progress
-python scripts/session.py checkpoint --label "oauth-complete"
-```
+## Support
 
-## Features
+The skill includes comprehensive documentation:
+- Read SKILL.md for core instructions
+- Check references/commands.md for all commands
+- See references/config-reference.md for configuration
+- Review references/handoff-template.md for handoff format
 
-- Git-native workflows (branches = sessions)
-- Context preservation across sessions
-- Checkpoint tracking with labels
-- Architectural decision recording
-- Comprehensive session handoffs
-- AI agent onboarding
+---
 
-## License
+**Skill Package**: `session-management.skill`
+**Version**: 1.0.0
+**Format**: Standard Claude skill package (.skill is a zip file)
 
-MIT
+Ready to transform your development workflow!

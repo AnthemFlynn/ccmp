@@ -1,6 +1,6 @@
 {
   "name": "session-management",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Git-native session lifecycle management with context preservation, checkpoint tracking, and seamless handoffs between coding sessions",
   "author": {
     "name": "AnthemFlynn",

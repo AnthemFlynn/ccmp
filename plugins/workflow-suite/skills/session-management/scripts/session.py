@@ -31,8 +31,8 @@ from pathlib import Path
 import subprocess
 
 # Add lib to path for integration imports
-repo_root = Path(__file__).resolve().parents[5]  # Go up to repo root
-sys.path.insert(0, str(repo_root / "lib"))
+plugin_root = Path(__file__).resolve().parents[3]  # Go up to workflow-suite plugin root
+sys.path.insert(0, str(plugin_root / "lib"))
 
 try:
     from session_integration import SessionIntegration

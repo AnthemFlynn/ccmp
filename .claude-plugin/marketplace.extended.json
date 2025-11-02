@@ -1,5 +1,6 @@
 {
-  "name": "Anthem's Claude Code Marketplace",
+  "name": "ccmp",
+  "owner": "AnthemFlynn",
   "id": "AnthemFlynn/ccmp",
   "version": "2.0.0",
   "description": "Integrated plugins for Claude Code that work together seamlessly. Features context management, session workflows, and TDD with automatic pattern discovery. Install all three for exponential value.",
@@ -39,7 +40,7 @@
       "name": "claude-context-manager",
       "source": "./plugins/claude-context-manager",
       "description": "Autonomous context management through claude.md files. Auto-loads in sessions, monitors health in real-time, updates on checkpoints. Works standalone or integrated with session-management for exponential value.",
-      "version": "2.0.0",
+      "version": "0.0.5",
       "category": "productivity",
       "keywords": [
         "context",
@@ -61,7 +62,7 @@
       "name": "session-management",
       "source": "./plugins/session-management",
       "description": "Git-native session lifecycle with automatic context loading, TDD integration, and comprehensive handoffs. Orchestrates claude-context-manager and tdd-workflow. The integration hub.",
-      "version": "2.0.0",
+      "version": "0.0.5",
       "category": "productivity",
       "keywords": [
         "git",
@@ -84,7 +85,7 @@
       "name": "tdd-workflow",
       "source": "./plugins/tdd-workflow",
       "description": "Test-Driven Development with automatic pattern discovery and test context documentation. GREEN checkpoints auto-document patterns, violations detected, discipline scored. Integrates with sessions for full TDD tracking.",
-      "version": "2.0.0",
+      "version": "0.0.5",
       "category": "testing",
       "keywords": [
         "tdd",

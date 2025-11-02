@@ -1,6 +1,6 @@
 {
   "name": "claude-context-manager",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Autonomous context management for codebases through claude.md files with monitoring, staleness detection, and intelligent updates",
   "author": {
     "name": "AnthemFlynn",

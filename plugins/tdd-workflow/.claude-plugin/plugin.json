@@ -1,6 +1,6 @@
 {
   "name": "tdd-workflow",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Test-Driven Development workflow with session integration. Enforces RED-GREEN-REFACTOR discipline with automatic checkpoints, metrics tracking, and enhanced session reporting.",
   "author": {
     "name": "AnthemFlynn",
