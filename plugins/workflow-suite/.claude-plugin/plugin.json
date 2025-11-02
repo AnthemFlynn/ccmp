@@ -20,22 +20,5 @@
     "test-driven-development",
     "pattern-discovery"
   ],
-  "category": "productivity",
-  "skills": [
-    {
-      "name": "claude-context-manager",
-      "path": "./skills/claude-context-manager/SKILL.md",
-      "description": "Autonomous context management for codebases through claude.md files"
-    },
-    {
-      "name": "session-management",
-      "path": "./skills/session-management/SKILL.md",
-      "description": "Git-native session lifecycle management for software development"
-    },
-    {
-      "name": "tdd-workflow",
-      "path": "./skills/tdd-workflow/SKILL.md",
-      "description": "Test-Driven Development workflow with RED-GREEN-REFACTOR enforcement"
-    }
-  ]
+  "category": "productivity"
 }
