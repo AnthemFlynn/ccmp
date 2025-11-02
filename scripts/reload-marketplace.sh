@@ -8,29 +8,24 @@ echo ""
 
 # Remove all CCMP plugins (ignore errors if not installed)
 echo "📦 Removing old plugins..."
-claude plugin remove workflow-suite 2>/dev/null || true
-claude plugin remove session-management 2>/dev/null || true
-claude plugin remove claude-context-manager 2>/dev/null || true
-claude plugin remove tdd-workflow 2>/dev/null || true
+claude plugin uninstall workflow-suite 2>/dev/null || true
+claude plugin uninstall session-management 2>/dev/null || true
+claude plugin uninstall claude-context-manager 2>/dev/null || true
+claude plugin uninstall tdd-workflow 2>/dev/null || true
 echo "✅ Old plugins removed"
 echo ""
 
 # Remove and re-add marketplace to force refresh
 echo "🏪 Refreshing marketplace..."
-claude marketplace remove ccmp 2>/dev/null || true
-claude marketplace add AnthemFlynn/ccmp
+claude plugin marketplace remove ccmp 2>/dev/null || true
+claude plugin marketplace add AnthemFlynn/ccmp
 echo "✅ Marketplace refreshed"
 echo ""
 
 # Install workflow-suite (bundles all three skills)
 echo "📥 Installing workflow-suite..."
-claude plugin add AnthemFlynn/ccmp/workflow-suite
+claude plugin install workflow-suite@ccmp
 echo "✅ workflow-suite installed"
-echo ""
-
-# Check for errors
-echo "🔍 Checking installation status..."
-claude plugin list
 echo ""
 
 echo "✨ Done! Check 'View installation status (errors)' in Claude Code to verify."
