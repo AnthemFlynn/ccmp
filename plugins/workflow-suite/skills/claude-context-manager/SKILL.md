@@ -1,6 +1,6 @@
 ---
 name: claude-context-manager
-description: Enables autonomous context management for codebases through claude.md files. Use when creating, maintaining, or synchronizing AI agent context. Provides tools and workflows for monitoring context health, detecting staleness, and updating intelligently. Helps Claude work proactively as a context manager.
+description: Enables autonomous context management for codebases through claude.md files. Use when initializing context management, creating claude.md files, maintaining or synchronizing AI agent context, monitoring context health, detecting staleness, and updating intelligently. Helps Claude work proactively as a context manager.
 ---
 
 # Claude Context Manager

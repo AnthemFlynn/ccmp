@@ -1,6 +1,6 @@
 ---
 name: session-management
-description: Git-native session lifecycle management for software development. Use when starting/resuming coding sessions, creating checkpoints, tracking objectives and blockers, generating handoffs between sessions, or needing context preservation across work sessions. Provides intelligent onboarding for AI coding agents by loading comprehensive project context.
+description: Git-native session lifecycle management for software development. Use when initializing session management, starting/resuming coding sessions, creating checkpoints, tracking objectives and blockers, generating handoffs between sessions, or needing context preservation across work sessions. Provides intelligent onboarding for AI coding agents by loading comprehensive project context.
 ---
 
 # Session Management
