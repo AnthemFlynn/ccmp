@@ -8,7 +8,6 @@
   },
   "repository": "https://github.com/AnthemFlynn/ccmp",
   "license": "MIT",
-  "category": "testing",
   "keywords": [
     "tdd",
     "test-driven-development",
@@ -16,12 +15,5 @@
     "red-green-refactor",
     "session-integration",
     "workflow"
-  ],
-  "skills": [
-    {
-      "name": "tdd-workflow",
-      "path": "./skills/tdd-workflow/SKILL.md",
-      "description": "Test-Driven Development workflow with RED-GREEN-REFACTOR enforcement and session integration"
-    }
   ]
 }

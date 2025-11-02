@@ -8,19 +8,11 @@
   },
   "repository": "https://github.com/AnthemFlynn/ccmp",
   "license": "MIT",
-  "category": "productivity",
   "keywords": [
     "context",
     "claude.md",
     "documentation",
     "automation",
     "codebase-intelligence"
-  ],
-  "skills": [
-    {
-      "name": "claude-context-manager",
-      "path": "./skills/claude-context-manager/SKILL.md",
-      "description": "Enables autonomous context management for codebases through claude.md files"
-    }
   ]
 }
