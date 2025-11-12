@@ -6,9 +6,8 @@ Analyzes git repository state for project status reports.
 """
 
 import subprocess
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class GitAnalyzer:
@@ -38,6 +37,11 @@ class GitAnalyzer:
 
     def get_uncommitted_changes(self) -> Dict[str, List[str]]:
         """Get uncommitted and untracked files"""
+        # Get staged files
+        staged_output = self._run_git(["diff", "--cached", "--name-only"])
+        staged = staged_output.split("\n") if staged_output else []
+        staged = [f for f in staged if f]  # Filter empty strings
+
         # Get modified files
         modified_output = self._run_git(["diff", "--name-only"])
         modified = modified_output.split("\n") if modified_output else []
@@ -49,6 +53,7 @@ class GitAnalyzer:
         untracked = [f for f in untracked if f]
 
         return {
+            "staged": staged,
             "modified": modified,
             "untracked": untracked
         }
@@ -81,7 +86,7 @@ class GitAnalyzer:
 
         return branches
 
-    def get_remote_sync_status(self) -> Dict[str, any]:
+    def get_remote_sync_status(self) -> Dict[str, Any]:
         """Get sync status with remote"""
         current_branch = self.get_current_branch()
         if not current_branch:
@@ -135,6 +140,8 @@ class GitAnalyzer:
                 lines.append(f"**Status**: Up to date with {sync_status['upstream']}")
 
         # Uncommitted changes
+        if changes["staged"]:
+            lines.append(f"**Staged**: {len(changes['staged'])} files")
         if changes["modified"]:
             lines.append(f"**Uncommitted**: {len(changes['modified'])} files modified")
         if changes["untracked"]:

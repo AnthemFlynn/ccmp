@@ -14,8 +14,10 @@ def test_get_uncommitted_changes():
     analyzer = GitAnalyzer()
     changes = analyzer.get_uncommitted_changes()
     assert isinstance(changes, dict)
+    assert "staged" in changes
     assert "modified" in changes
     assert "untracked" in changes
+    assert isinstance(changes["staged"], list)
     assert isinstance(changes["modified"], list)
     assert isinstance(changes["untracked"], list)
 
