@@ -26,50 +26,89 @@ Session management enhances git workflows by:
 python scripts/init_session.py
 ```
 
-Creates `.session/` directory with:
-- `config.yaml` - Session configuration
-- `architecture.md` - Project architecture (edit for your project)
-- `conventions.md` - Code conventions (edit for your project)
+Creates `.sessions/` directory with:
+- `config.yaml` - Session configuration (optional)
+- `checkpoints/` - Checkpoint storage
+- `state.json` - Current session state
 
-### Start a Session
+### Core Workflows
+
+#### Session Start (`/session-start`)
+
+**Rapid re-immersion for both human and AI**
 
 ```bash
-# New feature session
-python scripts/session.py start feature/new-feature --objective "Build user authentication"
-
-# Resume existing
-python scripts/session.py resume
+/session-start
 ```
 
-### Create Checkpoints
+**What happens:**
+1. **Project status report generated** - Health, git status, recent work, open items
+2. **Context-aware options presented** - AI-guided suggestions based on project state
+3. **Branch selection** - Best practice guidance for branch management
+4. **Context loaded** - Architecture, decisions, patterns from last session
+5. **Session ready** - Both human and AI fully contextualized
+
+**Use when:**
+- Starting work on a project
+- Returning after days away
+- Context switching between projects
+
+#### Create Checkpoint (`/checkpoint`)
+
+**Quick save points during work**
 
 ```bash
-# Save progress
+/checkpoint
+```
+
+**What happens:**
+1. **Automatic capture** - Git diff, metrics, TDD cycles analyzed
+2. **Optional notes** - Add context if desired (press Enter to skip)
+3. **Checkpoint saved** - Comprehensive snapshot generated
+4. **Git commit** - Optionally create commit with `--commit` flag
+
+**Use when:**
+- At logical milestones
+- Completing sub-tasks
+- Before switching contexts
+
+**Examples:**
+```bash
+# Simple checkpoint
 python scripts/session.py checkpoint --label "oauth-complete"
 
-# With architectural decision
-python scripts/session.py checkpoint --decision "Using JWT over sessions for stateless auth"
+# Checkpoint with notes and git commit
+python scripts/session.py checkpoint --label "feature-complete" --notes "OAuth flow tested" --commit
+
+# With custom commit message
+python scripts/session.py checkpoint --label "bugfix" --commit --message "fix: resolve auth token expiry"
 ```
 
-### End Session
+#### End Session (`/session-end`)
+
+**Comprehensive knowledge capture and handoff**
 
 ```bash
-python scripts/session.py end --handoff
+/session-end
 ```
 
-Generates handoff document with:
-- Completed objectives
-- Decisions made
-- Active blockers
-- Progress metrics
-- Next steps
+**What happens:**
+1. **Session notes prompt** - Capture what you accomplished, decisions, what to remember
+2. **Handoff generated** - Full session summary with next steps
+3. **Git push** - Optionally push commits to remote (default: yes, use `--no-push` to skip)
+4. **State saved** - Ready for next session
+
+**Use when:**
+- Finishing work session
+- End of day
+- Before extended break
 
 ## Session Lifecycle
 
-**START** → Load context, set objectives, brief agent  
-**WORK** → Track changes, record decisions  
-**CHECKPOINT** → Save progress, update metrics  
-**END** → Generate handoff, archive session
+**START** → Load full project context with status report
+**WORK** → Track changes automatically in background
+**CHECKPOINT** → Save progress with automatic git analysis
+**END** → Generate handoff with comprehensive session summary
 
 ## Key Features
 
