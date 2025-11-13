@@ -8,7 +8,7 @@ Checks project health: tests, linting, coverage, build status.
 import subprocess
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class HealthChecker:
@@ -32,7 +32,7 @@ class HealthChecker:
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return None
 
-    def check_tests(self) -> Dict[str, any]:
+    def check_tests(self) -> Dict[str, Any]:
         """Check test status (pytest)"""
         result = self._run_command(["pytest", "--collect-only", "-q"])
 
@@ -50,7 +50,7 @@ class HealthChecker:
         else:
             return {"status": "fail", "message": result.stderr[:200]}
 
-    def check_ccmp_context_health(self) -> Optional[Dict[str, any]]:
+    def check_ccmp_context_health(self) -> Optional[Dict[str, Any]]:
         """Check context health from .ccmp/state.json"""
         state_file = self.project_path / ".ccmp" / "state.json"
 
