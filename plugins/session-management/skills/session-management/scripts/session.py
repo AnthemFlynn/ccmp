@@ -125,8 +125,27 @@ def cmd_start(args):
         choice = input("Choice [1/2/3]: ")
 
         if choice == "1":
-            # TODO: Load branch from last session
-            branch = input("Enter branch name to resume: ")
+            # Load branch from last session
+            state_file = Path(".sessions") / "state.json"
+            last_branch = None
+            if state_file.exists():
+                try:
+                    with open(state_file) as f:
+                        last_state = json.load(f)
+                        last_branch = last_state.get("branch")
+                except (json.JSONDecodeError, IOError):
+                    pass
+
+            if last_branch:
+                print(f"\nLast session was on branch: {last_branch}")
+                resume_choice = input(f"Resume '{last_branch}'? [Y/n]: ").strip().lower()
+                if resume_choice in ['', 'y', 'yes']:
+                    branch = last_branch
+                else:
+                    branch = input("Enter branch name to resume: ")
+            else:
+                print("\nNo previous session found.")
+                branch = input("Enter branch name to resume: ")
         else:
             branch = input("Enter new branch name: ")
 
