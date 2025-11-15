@@ -33,6 +33,8 @@ Creates `.sessions/` directory with:
 
 ### Core Workflows
 
+**Important**: All slash commands use the `AskUserQuestion` tool to gather inputs interactively. The Python scripts accept CLI arguments, so commands collect user choices via multiple-choice prompts, then execute scripts with those arguments.
+
 #### Session Start (`/session-start`)
 
 **Rapid re-immersion for both human and AI**
@@ -43,8 +45,8 @@ Creates `.sessions/` directory with:
 
 **What happens:**
 1. **Project status report generated** - Health, git status, recent work, open items
-2. **Context-aware options presented** - AI-guided suggestions based on project state
-3. **Branch selection** - Best practice guidance for branch management
+2. **Interactive prompts via AskUserQuestion** - User selects what to work on, which branch, and session objectives through multiple-choice questions
+3. **Branch selection** - Choose from active branches or create new (hotfix/feature/bugfix)
 4. **Context loaded** - Architecture, decisions, patterns from last session
 5. **Session ready** - Both human and AI fully contextualized
 
@@ -63,9 +65,9 @@ Creates `.sessions/` directory with:
 
 **What happens:**
 1. **Automatic capture** - Git diff, metrics, TDD cycles analyzed
-2. **Optional notes** - Add context if desired (press Enter to skip)
+2. **Interactive prompts via AskUserQuestion** - User chooses whether to add notes, create git commit, or both
 3. **Checkpoint saved** - Comprehensive snapshot generated
-4. **Git commit** - Optionally create commit with `--commit` flag
+4. **Git commit** - Optionally create commit with auto-generated or custom message
 
 **Use when:**
 - At logical milestones
@@ -93,10 +95,11 @@ python scripts/session.py checkpoint --label "bugfix" --commit --message "fix: r
 ```
 
 **What happens:**
-1. **Session notes prompt** - Capture what you accomplished, decisions, what to remember
-2. **Handoff generated** - Full session summary with next steps
-3. **Git push** - Optionally push commits to remote (default: yes, use `--no-push` to skip)
-4. **State saved** - Ready for next session
+1. **Final checkpoint created** - Captures current state
+2. **Interactive prompts via AskUserQuestion** - User provides session accomplishments, decisions made, and context for next session
+3. **Handoff generated** - Full session summary with metrics and next steps
+4. **Git push** - User chooses whether to push commits to remote
+5. **State saved** - Ready for next session
 
 **Use when:**
 - Finishing work session

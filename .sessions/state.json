@@ -1,0 +1,8 @@
+{
+  "branch": "fix/test-failures",
+  "objectives": [
+    "Fix test failures"
+  ],
+  "started_at": "2025-11-14T23:12:09.107698",
+  "mode": "tdd"
+}
