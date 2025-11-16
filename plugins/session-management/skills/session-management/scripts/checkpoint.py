@@ -76,8 +76,23 @@ class CheckpointManager:
     def get_recent_commits(self, since_checkpoint: Optional[str] = None) -> List[str]:
         """Get commits since last checkpoint"""
         if since_checkpoint:
-            # TODO: Track checkpoint commits
-            pass
+            # Load checkpoint file to get commit hash
+            checkpoint_file = self.checkpoints_dir / f"{since_checkpoint}.md"
+            if checkpoint_file.exists():
+                try:
+                    with open(checkpoint_file) as f:
+                        content = f.read()
+                        # Look for commit hash in checkpoint metadata
+                        for line in content.split("\n"):
+                            if line.startswith("**Commit**:"):
+                                commit_hash = line.split(":", 1)[1].strip()
+                                # Get commits since that hash
+                                log_output = self._run_git(["log", f"{commit_hash}..HEAD", "--oneline"])
+                                if log_output:
+                                    return log_output.split("\n")
+                                return []
+                except IOError:
+                    pass
 
         # Get last 5 commits
         log_output = self._run_git(["log", "--oneline", "-5"])
@@ -117,11 +132,16 @@ class CheckpointManager:
         commits = self.get_recent_commits()
         tdd_metrics = self.load_tdd_metrics()
 
+        # Get current commit hash for tracking
+        current_commit = self._run_git(["rev-parse", "HEAD"])
+
         lines = []
         lines.append(f"# Checkpoint: {checkpoint_id}")
         if label:
             lines.append(f"**Label**: {label}")
         lines.append(f"**Time**: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
+        if current_commit:
+            lines.append(f"**Commit**: {current_commit}")
         lines.append("")
 
         # What Changed
