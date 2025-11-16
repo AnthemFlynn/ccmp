@@ -293,8 +293,63 @@ def cmd_checkpoint(args):
             if result.returncode != 0:  # There are changes
                 # Stage all changes
                 subprocess.run(["git", "add", "."], check=True)
+
+                # Generate commit message
+                commit_msg = args.message if hasattr(args, 'message') and args.message else None
+
+                # If no custom message, use git-commit skill to analyze and suggest
+                if not commit_msg:
+                    try:
+                        # Run analyze-diff.py from git-commit plugin
+                        analyzer_script = repo_root / "plugins" / "git-commit" / "skills" / "git-commit" / "scripts" / "analyze-diff.py"
+
+                        if analyzer_script.exists():
+                            result = subprocess.run(
+                                ["python3", str(analyzer_script), "--json"],
+                                capture_output=True,
+                                text=True,
+                                check=True
+                            )
+
+                            analysis = json.loads(result.stdout)
+
+                            if analysis and 'error' not in analysis:
+                                # Build commit message from analysis
+                                msg_type = analysis['type']
+                                scope = f"({analysis['scope']})" if analysis['scope'] else ""
+                                breaking = "!" if analysis['breaking'] else ""
+                                desc = analysis['description']
+
+                                commit_msg = f"{msg_type}{scope}{breaking}: {desc}"
+
+                                # Add notes as body if provided
+                                if notes:
+                                    commit_msg = f"{commit_msg}\n\n{notes}"
+
+                                print(f"\n📊 Analyzed changes: {msg_type} ({analysis['confidence']:.0%} confidence)")
+                                print(f"📝 Suggested commit:\n   {commit_msg.split(chr(10))[0]}")
+                            else:
+                                # Fallback to checkpoint label
+                                commit_msg = f"checkpoint: {label}"
+                                if notes:
+                                    commit_msg = f"{commit_msg}\n\n{notes}"
+                        else:
+                            # git-commit skill not found, use simple message
+                            commit_msg = f"checkpoint: {label}"
+                            if notes:
+                                commit_msg = f"{commit_msg}\n\n{notes}"
+                    except Exception as e:
+                        # On any error, fall back to simple message
+                        print(f"⚠️  Commit analysis failed ({e}), using simple message")
+                        commit_msg = f"checkpoint: {label}"
+                        if notes:
+                            commit_msg = f"{commit_msg}\n\n{notes}"
+                else:
+                    # Custom message provided, add notes if present
+                    if notes:
+                        commit_msg = f"{commit_msg}\n\n{notes}"
+
                 # Create commit
-                commit_msg = args.message or f"checkpoint: {label}"
                 subprocess.run(["git", "commit", "-m", commit_msg], check=True)
                 print("📝 Git commit created")
         except subprocess.CalledProcessError as e:
