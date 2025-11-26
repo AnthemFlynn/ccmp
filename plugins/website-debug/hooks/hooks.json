@@ -1,0 +1,30 @@
+{
+  "$schema": "https://claude.ai/schemas/hooks.json",
+  "hooks": [
+    {
+      "event": "Stop",
+      "description": "Remind about verification after frontend file changes",
+      "matcher": {
+        "tool": "Write",
+        "path": "**/*.{css,scss,less,html,jsx,tsx,vue,svelte}"
+      },
+      "command": "echo '💡 Tip: Run /verify-changes to confirm your frontend changes work correctly'"
+    },
+    {
+      "event": "SubagentStop",
+      "description": "Suggest next steps after CSS debugger runs",
+      "matcher": {
+        "agentName": "css-debugger"
+      },
+      "command": "echo '✓ CSS analysis complete. Consider running /verify-changes after applying fixes.'"
+    },
+    {
+      "event": "SubagentStop", 
+      "description": "Suggest next steps after JS debugger runs",
+      "matcher": {
+        "agentName": "js-debugger"
+      },
+      "command": "echo '✓ JavaScript analysis complete. Run /watch-console to monitor for new errors.'"
+    }
+  ]
+}

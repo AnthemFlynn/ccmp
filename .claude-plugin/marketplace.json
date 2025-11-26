@@ -117,6 +117,31 @@
       },
       "repository": "https://github.com/AnthemFlynn/ccmp",
       "license": "MIT"
+    },
+    {
+      "name": "website-debug",
+      "source": "./plugins/website-debug",
+      "description": "Frontend website debugging toolkit with browser automation, visual verification, and self-debugging capabilities. Includes specialized agents for CSS, JavaScript, responsive testing, and performance analysis.",
+      "version": "1.0.0",
+      "category": "debugging",
+      "keywords": [
+        "debugging",
+        "frontend",
+        "browser",
+        "chrome",
+        "webkit",
+        "safari",
+        "css",
+        "javascript",
+        "responsive",
+        "automation"
+      ],
+      "author": {
+        "name": "Anthem",
+        "email": "AnthemFlynn@users.noreply.github.com"
+      },
+      "repository": "https://github.com/AnthemFlynn/ccmp",
+      "license": "MIT"
     }
   ]
 }
