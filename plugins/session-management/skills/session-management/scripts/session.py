@@ -110,22 +110,42 @@ def cmd_start(args):
     except ImportError:
         print("⚠️  project-status-report plugin not found, skipping report\n")
 
-    # Present options (simplified for now)
-    print("What would you like to work on?")
-    print()
-    print("1. Resume existing work (if available)")
-    print("2. Start new work")
-    print("3. Address health issues first")
-    print()
-
-    choice = input("Choice [1/2/3]: ")
-
-    # Handle branch selection based on choice
+    # Handle branch selection
     branch = args.branch
+
+    # Only present interactive prompts if branch not provided
     if not branch:
+        print("What would you like to work on?")
+        print()
+        print("1. Resume existing work (if available)")
+        print("2. Start new work")
+        print("3. Address health issues first")
+        print()
+
+        choice = input("Choice [1/2/3]: ")
+
         if choice == "1":
-            # TODO: Load branch from last session
-            branch = input("Enter branch name to resume: ")
+            # Load branch from last session
+            state_file = Path(".sessions") / "state.json"
+            last_branch = None
+            if state_file.exists():
+                try:
+                    with open(state_file) as f:
+                        last_state = json.load(f)
+                        last_branch = last_state.get("branch")
+                except (json.JSONDecodeError, IOError):
+                    pass
+
+            if last_branch:
+                print(f"\nLast session was on branch: {last_branch}")
+                resume_choice = input(f"Resume '{last_branch}'? [Y/n]: ").strip().lower()
+                if resume_choice in ['', 'y', 'yes']:
+                    branch = last_branch
+                else:
+                    branch = input("Enter branch name to resume: ")
+            else:
+                print("\nNo previous session found.")
+                branch = input("Enter branch name to resume: ")
         else:
             branch = input("Enter new branch name: ")
 
@@ -271,14 +291,67 @@ def cmd_checkpoint(args):
                 capture_output=True
             )
             if result.returncode != 0:  # There are changes
-                response = input("Stage and commit changes? [Y/n]: ")
-                if response.lower() != 'n':
-                    # Stage all changes
-                    subprocess.run(["git", "add", "."], check=True)
-                    # Create commit
-                    commit_msg = args.message or f"checkpoint: {label}"
-                    subprocess.run(["git", "commit", "-m", commit_msg], check=True)
-                    print("📝 Git commit created")
+                # Stage all changes
+                subprocess.run(["git", "add", "."], check=True)
+
+                # Generate commit message
+                commit_msg = args.message if hasattr(args, 'message') and args.message else None
+
+                # If no custom message, use git-commit skill to analyze and suggest
+                if not commit_msg:
+                    try:
+                        # Run analyze-diff.py from git-commit plugin
+                        analyzer_script = repo_root / "plugins" / "git-commit" / "skills" / "git-commit" / "scripts" / "analyze-diff.py"
+
+                        if analyzer_script.exists():
+                            result = subprocess.run(
+                                ["python3", str(analyzer_script), "--json"],
+                                capture_output=True,
+                                text=True,
+                                check=True
+                            )
+
+                            analysis = json.loads(result.stdout)
+
+                            if analysis and 'error' not in analysis:
+                                # Build commit message from analysis
+                                msg_type = analysis['type']
+                                scope = f"({analysis['scope']})" if analysis['scope'] else ""
+                                breaking = "!" if analysis['breaking'] else ""
+                                desc = analysis['description']
+
+                                commit_msg = f"{msg_type}{scope}{breaking}: {desc}"
+
+                                # Add notes as body if provided
+                                if notes:
+                                    commit_msg = f"{commit_msg}\n\n{notes}"
+
+                                print(f"\n📊 Analyzed changes: {msg_type} ({analysis['confidence']:.0%} confidence)")
+                                print(f"📝 Suggested commit:\n   {commit_msg.split(chr(10))[0]}")
+                            else:
+                                # Fallback to checkpoint label
+                                commit_msg = f"checkpoint: {label}"
+                                if notes:
+                                    commit_msg = f"{commit_msg}\n\n{notes}"
+                        else:
+                            # git-commit skill not found, use simple message
+                            commit_msg = f"checkpoint: {label}"
+                            if notes:
+                                commit_msg = f"{commit_msg}\n\n{notes}"
+                    except Exception as e:
+                        # On any error, fall back to simple message
+                        print(f"⚠️  Commit analysis failed ({e}), using simple message")
+                        commit_msg = f"checkpoint: {label}"
+                        if notes:
+                            commit_msg = f"{commit_msg}\n\n{notes}"
+                else:
+                    # Custom message provided, add notes if present
+                    if notes:
+                        commit_msg = f"{commit_msg}\n\n{notes}"
+
+                # Create commit
+                subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+                print("📝 Git commit created")
         except subprocess.CalledProcessError as e:
             print(f"⚠️  Git commit failed: {e}")
 
@@ -312,14 +385,23 @@ def cmd_end(args):
     if not check_session_initialized():
         return 1
 
-    # Prompt for session notes
-    print("\nSession Summary Notes:")
-    print("\nWhat did you accomplish?")
-    accomplished = input("> ")
-    print("\nKey decisions made?")
-    decisions = input("> ")
-    print("\nWhat to remember for next session?")
-    remember = input("> ")
+    # Gather session notes - use args if provided, otherwise prompt
+    accomplished = args.accomplished if hasattr(args, 'accomplished') and args.accomplished else None
+    decisions = args.decisions if hasattr(args, 'decisions') and args.decisions else None
+    remember = args.remember if hasattr(args, 'remember') and args.remember else None
+
+    # Only prompt if not provided via arguments
+    if not accomplished or not decisions or not remember:
+        print("\nSession Summary Notes:")
+        if not accomplished:
+            print("\nWhat did you accomplish?")
+            accomplished = input("> ")
+        if not decisions:
+            print("\nKey decisions made?")
+            decisions = input("> ")
+        if not remember:
+            print("\nWhat to remember for next session?")
+            remember = input("> ")
 
     session_notes = f"""**Accomplished**: {accomplished}
 
@@ -338,7 +420,13 @@ def cmd_end(args):
     print(f"\n✅ Session ended. Handoff generated.")
 
     # Git push handling
-    if hasattr(args, 'push') and args.push:
+    should_push = False
+    if hasattr(args, 'no_push') and args.no_push:
+        should_push = False
+    elif hasattr(args, 'push') and args.push:
+        should_push = True
+    else:
+        # Default behavior: ask user
         try:
             # Check for commits to push
             result = subprocess.run(
@@ -355,11 +443,18 @@ def cmd_end(args):
                     print(f"  - {commit}")
 
                 response = input(f"\nPush {len(commits)} commits to remote? [Y/n]: ")
-                if response.lower() != 'n':
-                    subprocess.run(["git", "push"], check=True)
-                    print("📤 Pushed to remote")
+                should_push = response.lower() != 'n'
         except subprocess.CalledProcessError:
-            print("⚠️  No commits to push or git push failed")
+            print("⚠️  No commits to push")
+            should_push = False
+
+    # Execute push if decided
+    if should_push:
+        try:
+            subprocess.run(["git", "push"], check=True)
+            print("📤 Pushed to remote")
+        except subprocess.CalledProcessError:
+            print("⚠️  Git push failed")
 
     # Optional: merge to target branch
     if hasattr(args, 'merge_to') and args.merge_to:
@@ -549,7 +644,11 @@ def main():
     # end command
     end_parser = subparsers.add_parser("end", help="End session")
     end_parser.add_argument("--handoff", action="store_true", default=True, help="Generate handoff")
-    end_parser.add_argument("--push", action="store_true", default=True, help="Push commits to remote")
+    end_parser.add_argument("--push", action="store_true", help="Push commits to remote")
+    end_parser.add_argument("--no-push", action="store_true", help="Don't push commits to remote")
+    end_parser.add_argument("--accomplished", help="What was accomplished in this session")
+    end_parser.add_argument("--decisions", help="Key decisions made")
+    end_parser.add_argument("--remember", help="What to remember for next session")
     end_parser.add_argument("--merge-to", help="Merge to branch")
     end_parser.set_defaults(func=cmd_end)
     

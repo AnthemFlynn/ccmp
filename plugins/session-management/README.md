@@ -66,6 +66,218 @@ Once installed, you can ask Claude things like:
 
 Claude will use the skill automatically and guide you through the process.
 
+## Usage
+
+### Starting a Session
+
+```bash
+# Via slash command
+/session-management:session-start
+
+# Via CLI
+python3 scripts/session.py start --branch feature/my-feature --objective "Implement user authentication"
+```
+
+**What happens:**
+1. Generates project status report (if project-status-report installed)
+2. Presents context-aware options (resume existing work, start new, address health issues)
+3. Checks out or creates the branch
+4. Saves session state with objectives
+5. Updates plugin coordination state
+
+### Creating Checkpoints
+
+```bash
+# Via slash command
+/session-management:checkpoint --commit --notes "Completed OAuth flow"
+
+# Via CLI
+python3 scripts/session.py checkpoint --label "oauth-complete" --commit --notes "Implemented OAuth2 authentication"
+```
+
+**What happens:**
+1. Captures current git diff and changes
+2. Analyzes changes with git-commit skill (if installed)
+3. Generates professional commit message
+4. Creates checkpoint document in `.sessions/checkpoints/`
+5. Optionally creates git commit with generated message
+
+### Ending a Session
+
+```bash
+# Via slash command
+/session-management:session-end
+
+# Via CLI
+python3 scripts/session.py end --push
+```
+
+**What happens:**
+1. Prompts for session summary (accomplished, decisions, remember)
+2. Generates comprehensive handoff document
+3. Saves handoff to `.sessions/handoffs/`
+4. Optionally pushes commits to remote (with confirmation)
+5. Updates session state to "completed"
+
+### Checking Session Status
+
+```bash
+python3 scripts/session.py status
+```
+
+**Shows:**
+- Current session details (branch, objectives, start time)
+- Session mode (TDD, regular)
+- Recent checkpoints
+- Integration state (TDD cycles, context health)
+
+## Examples
+
+### Example 1: Start a New Feature Session
+
+```bash
+# Start session with Claude
+/session-management:session-start
+
+# Output:
+# === PROJECT STATUS REPORT ===
+#
+# ✅ Tests: 24 passed, 0 failed
+# ✅ Build: Success
+# ⚠️  3 uncommitted changes
+#
+# What would you like to work on?
+# 1. Resume existing work
+# 2. Start new work
+# 3. Address health issues first
+#
+# Choice [1/2/3]: 2
+
+# Enter new branch name: feature/oauth-integration
+# Enter objectives (one per line, empty line to finish):
+# > Implement OAuth2 authentication with Google and GitHub
+# > Add token refresh mechanism
+# >
+
+# ✅ Session started on feature/oauth-integration
+# Objectives:
+# - Implement OAuth2 authentication with Google and GitHub
+# - Add token refresh mechanism
+```
+
+### Example 2: Create a Checkpoint with Auto-Commit
+
+```bash
+# Work on your code, then create checkpoint
+/session-management:checkpoint --commit --notes "Implemented OAuth2 flow with token refresh"
+
+# Output:
+# 📊 Analyzed changes: feat (100% confidence)
+# 📝 Suggested commit:
+#    feat(auth): add OAuth2 authentication
+#
+# Implemented OAuth2 flow with token refresh
+#
+# ✅ Checkpoint created: 2025-11-15T14-30-00
+# 📝 Git commit created
+# 💾 Saved to .sessions/checkpoints/
+```
+
+### Example 3: End Session with Handoff
+
+```bash
+/session-management:session-end
+
+# Prompts:
+# What did you accomplish?
+# > Completed OAuth2 authentication system with Google and GitHub providers
+#
+# Key decisions made?
+# > Using RS256 for JWT signing, 24h token expiry, 30d refresh token expiry
+#
+# What to remember for next session?
+# > Need to add integration tests for OAuth edge cases
+
+# Output:
+# ✅ Session ended. Handoff generated.
+# 📄 Handoff saved to .sessions/handoffs/handoff_2025-11-15T16-30-00.md
+#
+# Commits to push: 3
+# - feat(auth): add OAuth2 authentication
+# - feat(auth): implement token refresh
+# - docs(auth): update API documentation
+#
+# Push 3 commits to remote? [Y/n]: y
+# 📤 Pushed to remote
+```
+
+### Example 4: Resume Previous Session
+
+```bash
+/session-management:session-start
+
+# Output:
+# Last session was on branch: feature/oauth-integration
+# Resume 'feature/oauth-integration'? [Y/n]: y
+#
+# ✅ Switched to branch: feature/oauth-integration
+# 📖 Loading session context...
+#
+# Session Objectives:
+# ✓ Implement OAuth2 authentication with Google and GitHub
+# ✓ Add token refresh mechanism
+# ○ Write integration tests
+#
+# Last Checkpoint: 19 hours ago
+# Status: GREEN (all tests passing)
+# Next: Add integration tests for OAuth edge cases
+```
+
+### Example 5: Integration with TDD Workflow
+
+When using with tdd-workflow plugin:
+
+```bash
+# Start session in TDD mode
+python3 scripts/session.py start --branch feature/validation --tdd
+
+# Work using RED-GREEN-REFACTOR...
+
+# Create checkpoint at GREEN phase
+/session-management:checkpoint --commit --tdd-phase GREEN
+
+# Session automatically tracks:
+# - TDD cycles completed
+# - Test pass/fail history
+# - Time in each phase
+# - Discipline adherence
+```
+
+### Example 6: Checkpoint History
+
+```bash
+# View recent checkpoints
+python3 scripts/session.py history --limit 5
+
+# Output:
+# === CHECKPOINT HISTORY ===
+#
+# 2025-11-15T16:30:00 - OAUTH_COMPLETE
+# Status: GREEN (tests passing)
+# Changes: +245 lines, -12 lines (3 files)
+# Commit: feat(auth): add OAuth2 authentication
+#
+# 2025-11-15T14:20:00 - TOKEN_REFRESH
+# Status: GREEN
+# Changes: +89 lines, -5 lines (2 files)
+# Commit: feat(auth): implement token refresh
+#
+# 2025-11-15T12:15:00 - OAUTH_PROVIDERS
+# Status: RED (2 tests failing)
+# Changes: +156 lines (4 files)
+# Note: Implementing OAuth provider interfaces
+```
+
 ## What's Included in the Skill
 
 ### Scripts (`scripts/`)

@@ -1,0 +1,38 @@
+{
+  "name": "website-debug-skill",
+  "version": "1.0.0",
+  "description": "Frontend website debugging toolkit for Claude Code",
+  "type": "module",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "start": "node scripts/browser-start.js",
+    "start:profile": "node scripts/browser-start.js --profile",
+    "start:webkit": "node scripts/browser-start.js --webkit",
+    "nav": "node scripts/browser-nav.js",
+    "screenshot": "node scripts/browser-screenshot.js",
+    "eval": "node scripts/browser-eval.js",
+    "pick": "node scripts/browser-pick.js",
+    "console": "node scripts/browser-console.js",
+    "resize": "node scripts/browser-resize.js",
+    "dom": "node scripts/browser-dom.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.0.0"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.48.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "debugging",
+    "chrome",
+    "devtools",
+    "browser",
+    "automation",
+    "claude-code",
+    "skill"
+  ],
+  "license": "MIT"
+}
