@@ -23,20 +23,20 @@ Enable the **edit → verify → iterate** loop that makes frontend development 
 
 ```bash
 # Force reload to pick up changes
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'location.reload(true)'
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'location.reload(true)'
 
 # Wait for page load
 sleep 2
 
 # Capture current state
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
 ```
 
 ### 2. Check for Errors
 
 ```bash
 # Any JavaScript errors?
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
 ```
 
 ### 3. Verify Specific Changes
@@ -44,10 +44,10 @@ node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --error
 If a specific element was changed:
 ```bash
 # Check element exists
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR") !== null'
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR") !== null'
 
 # Check computed styles applied
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'getComputedStyle(document.querySelector("SELECTOR")).PROPERTY'
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'getComputedStyle(document.querySelector("SELECTOR")).PROPERTY'
 ```
 
 ### 4. Analyze Screenshot

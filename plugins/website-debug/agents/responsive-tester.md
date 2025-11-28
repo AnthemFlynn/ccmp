@@ -25,32 +25,32 @@ You are a responsive design expert who tests and validates layouts across multip
 
 ```bash
 # Mobile (iPhone SE - 375×667)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --mobile
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/mobile.png
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --mobile
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/mobile.png
 
 # Tablet (iPad - 768×1024)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --tablet
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/tablet.png
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --tablet
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/tablet.png
 
 # Desktop (1920×1080)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --desktop
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/desktop.png
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --desktop
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js --output=/tmp/desktop.png
 ```
 
 ### 2. Additional Device Tests
 
 ```bash
 # iPhone 14 Pro (393×852)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --iphone-pro
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --iphone-pro
 
 # Android (Pixel 7 - 412×915)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --android
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --android
 
 # iPad Pro (1024×1366)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --ipad-pro
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --ipad-pro
 
 # Laptop (1366×768)
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js --laptop
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js --laptop
 ```
 
 ### 3. Analysis Checklist

@@ -10,7 +10,7 @@ model: haiku
 Navigate the browser to a URL.
 
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-nav.js $ARGUMENTS
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-nav.js $ARGUMENTS
 ```
 
 ## Options

@@ -10,7 +10,7 @@ model: haiku
 Close the browser debugging session.
 
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-close.js $ARGUMENTS
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-close.js $ARGUMENTS
 ```
 
 ## Options
