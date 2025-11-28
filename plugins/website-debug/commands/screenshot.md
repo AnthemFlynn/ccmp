@@ -10,7 +10,7 @@ model: haiku
 Take a screenshot of the current browser state.
 
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js $ARGUMENTS
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js $ARGUMENTS
 ```
 
 ## Options

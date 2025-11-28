@@ -21,7 +21,7 @@ You are a performance optimization expert who diagnoses and fixes frontend perfo
 
 ### Page Load Metrics
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
   const t = performance.timing;
   const nav = performance.getEntriesByType("navigation")[0];
   return {
@@ -36,7 +36,7 @@ node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
 
 ### DOM Size Analysis
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
   const all = document.querySelectorAll("*");
   let maxDepth = 0;
   let deepest = null;
@@ -57,7 +57,7 @@ node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
 
 ### Memory Usage
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
   if (!performance.memory) return "Memory API not available (use Chrome with --enable-precise-memory-info)";
   const m = performance.memory;
   return {
@@ -70,7 +70,7 @@ node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
 
 ### Large Resources
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
   return performance.getEntriesByType("resource")
     .filter(r => r.transferSize > 100000)
     .map(r => ({
@@ -85,7 +85,7 @@ node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
 
 ### Layout Shifts (CLS)
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
   return new Promise(resolve => {
     let cls = 0;
     new PerformanceObserver(list => {

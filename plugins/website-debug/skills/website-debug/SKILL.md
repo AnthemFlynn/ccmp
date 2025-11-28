@@ -45,15 +45,15 @@ node scripts/browser-network.js --failures
 
 | Script | Purpose | Output |
 |--------|---------|--------|
-| `browser-start.sh` | Launch Chrome/WebKit with debug port | Status message |
-| `browser-nav.sh <url>` | Navigate to URL | Confirmation |
-| `browser-screenshot.sh` | Capture viewport | File path (PNG) |
-| `browser-eval.sh '<js>'` | Run JS in page | Result or error |
-| `browser-pick.sh "<msg>"` | Interactive selector | CSS selectors |
-| `browser-console.sh` | Get console output | Logs/errors |
-| `browser-network.sh` | Network activity | Request/response data |
-| `browser-dom.sh "<sel>"` | Get DOM snapshot | HTML fragment |
-| `browser-close.sh` | Close browser | Confirmation |
+| `browser-start.js` | Launch Chrome/WebKit with debug port | Status message |
+| `browser-nav.js <url>` | Navigate to URL | Confirmation |
+| `browser-screenshot.js` | Capture viewport | File path (PNG) |
+| `browser-eval.js '<js>'` | Run JS in page | Result or error |
+| `browser-pick.js "<msg>"` | Interactive selector | CSS selectors |
+| `browser-console.js` | Get console output | Logs/errors |
+| `browser-network.js` | Network activity | Request/response data |
+| `browser-dom.js "<sel>"` | Get DOM snapshot | HTML fragment |
+| `browser-close.js` | Close browser | Confirmation |
 
 ## Self-Debugging Workflow
 
@@ -62,32 +62,32 @@ When debugging frontend code Claude has written or modified:
 ### 1. Visual Verification Loop
 ```bash
 # After making CSS/HTML changes, verify visually
-./scripts/browser-screenshot.sh
+node scripts/browser-screenshot.js
 # Claude reads the screenshot, identifies issues, iterates
 ```
 
 ### 2. Console Error Detection
 ```bash
 # Check for JavaScript errors after changes
-./scripts/browser-console.sh --errors
+node scripts/browser-console.js --errors
 # Fix any errors found, re-verify
 ```
 
 ### 3. Responsive Testing
 ```bash
 # Test at different viewport sizes
-./scripts/browser-resize.sh 375 667   # iPhone SE
-./scripts/browser-screenshot.sh
-./scripts/browser-resize.sh 768 1024  # iPad
-./scripts/browser-screenshot.sh
-./scripts/browser-resize.sh 1920 1080 # Desktop
-./scripts/browser-screenshot.sh
+node scripts/browser-resize.js 375 667   # iPhone SE
+node scripts/browser-screenshot.js
+node scripts/browser-resize.js 768 1024  # iPad
+node scripts/browser-screenshot.js
+node scripts/browser-resize.js 1920 1080 # Desktop
+node scripts/browser-screenshot.js
 ```
 
 ### 4. Element Inspection
 ```bash
 # When user reports "X looks wrong", have them select it
-./scripts/browser-pick.sh "Click on the element that looks wrong"
+node scripts/browser-pick.js "Click on the element that looks wrong"
 # Returns detailed info including computed styles
 ```
 
@@ -102,7 +102,7 @@ Primary engine. Uses Chrome DevTools Protocol on port 9222.
 ### WebKit/Safari
 Fallback via Playwright's WebKit build. Closest to Safari behavior on macOS.
 ```bash
-./scripts/browser-start.sh --webkit
+node scripts/browser-start.js --webkit
 ```
 - Use for Safari-specific testing
 - Layout verification
@@ -125,35 +125,33 @@ For complex scenarios, load the appropriate reference:
 
 - **CSS Debugging**: See [references/css-debug.md](references/css-debug.md)
 - **JavaScript Errors**: See [references/js-debug.md](references/js-debug.md)
-- **Network Issues**: See [references/network-debug.md](references/network-debug.md)
-- **Responsive Design**: See [references/responsive-debug.md](references/responsive-debug.md)
-- **Performance**: See [references/performance-debug.md](references/performance-debug.md)
+- **Self-Debugging**: See [references/self-debug.md](references/self-debug.md)
 
 ### Composable Output
 
 All scripts output to files when practical, enabling:
 ```bash
 # Capture multiple screenshots for comparison
-./scripts/browser-screenshot.sh > /tmp/before.png
+node scripts/browser-screenshot.js --output=/tmp/before.png
 # ... make changes ...
-./scripts/browser-screenshot.sh > /tmp/after.png
+node scripts/browser-screenshot.js --output=/tmp/after.png
 
 # Save DOM snapshot for analysis
-./scripts/browser-dom.sh "body" > /tmp/page-structure.html
+node scripts/browser-dom.js "body" > /tmp/page-structure.html
 
 # Export console log for review
-./scripts/browser-console.sh > /tmp/console-log.txt
+node scripts/browser-console.js > /tmp/console-log.txt
 ```
 
 ### Chaining Commands
 ```bash
 # Navigate and screenshot in one command
-./scripts/browser-nav.sh https://example.com && ./scripts/browser-screenshot.sh
+node scripts/browser-nav.js https://example.com && node scripts/browser-screenshot.js
 
 # Full page audit
-./scripts/browser-nav.sh $URL && \
-  ./scripts/browser-console.sh --errors > /tmp/errors.txt && \
-  ./scripts/browser-screenshot.sh
+node scripts/browser-nav.js $URL && \
+  node scripts/browser-console.js --errors > /tmp/errors.txt && \
+  node scripts/browser-screenshot.js
 ```
 
 ## Setup Requirements
@@ -179,20 +177,20 @@ npm install -g puppeteer-core
 ### "Cannot connect to browser"
 Browser may not be running or wrong port:
 ```bash
-./scripts/browser-start.sh  # Restart browser
+node scripts/browser-start.js  # Restart browser
 ```
 
 ### "Permission denied"
 Scripts may need execute permission:
 ```bash
-chmod +x ./scripts/*.sh
+chmod +x ./scripts/*.js
 ```
 
 ### Chrome already running
 Kill existing instances first:
 ```bash
 killall "Google Chrome" 2>/dev/null
-./scripts/browser-start.sh
+node scripts/browser-start.js
 ```
 
 ### WebKit not found

@@ -13,12 +13,12 @@ Run comprehensive diagnostics on a specific element or the entire page.
 
 1. **Check element exists**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'document.querySelector("$ARGUMENTS") !== null'
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'document.querySelector("$ARGUMENTS") !== null'
    ```
 
 2. **Get element details**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
      const el = document.querySelector("$ARGUMENTS");
      if (!el) return "Element not found";
      const s = getComputedStyle(el);
@@ -46,34 +46,34 @@ Run comprehensive diagnostics on a specific element or the entire page.
 
 3. **Screenshot element**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js --selector="$ARGUMENTS"
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js --selector="$ARGUMENTS"
    ```
 
 ## If no selector (full page diagnosis):
 
 1. **Take screenshot**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
    ```
 
 2. **Check for JavaScript errors**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
    ```
 
 3. **Check network failures**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-network.js --failures
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-network.js --failures
    ```
 
 4. **Get page summary**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-dom.js
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-dom.js
    ```
 
 5. **Check accessibility basics**:
    ```bash
-   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
+   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
      const issues = [];
      // Images without alt
      const imgs = document.querySelectorAll("img:not([alt])");

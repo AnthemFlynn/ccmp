@@ -27,13 +27,13 @@ First, understand what the user is seeing vs. expecting. Use browser tools:
 
 ```bash
 # Get element's computed styles
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'getComputedStyle(document.querySelector("SELECTOR"))'
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'getComputedStyle(document.querySelector("SELECTOR"))'
 
 # Check element dimensions
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR").getBoundingClientRect()'
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR").getBoundingClientRect()'
 
 # Take screenshot for visual context
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
 ```
 
 ### 2. Common Diagnostic Queries

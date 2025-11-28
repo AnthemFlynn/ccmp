@@ -10,7 +10,7 @@ model: haiku
 Change the browser viewport size for responsive testing.
 
 ```bash
-node ~/.claude/plugins/*/skills/website-debug/scripts/browser-resize.js $ARGUMENTS
+node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-resize.js $ARGUMENTS
 ```
 
 ## Presets
