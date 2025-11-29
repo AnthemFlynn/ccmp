@@ -12,7 +12,7 @@ After making frontend changes, verify they work correctly.
 
 1. **Reload the page** to pick up changes:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'location.reload(true)'
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'location.reload(true)'
    ```
 
 2. **Wait for page load**:
@@ -22,12 +22,12 @@ After making frontend changes, verify they work correctly.
 
 3. **Take screenshot**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
    ```
 
 4. **Check for JavaScript errors**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
    ```
 
 5. **Analyze and report**:

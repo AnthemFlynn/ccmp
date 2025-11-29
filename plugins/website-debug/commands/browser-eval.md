@@ -10,7 +10,7 @@ model: haiku
 Execute JavaScript in the active browser tab's page context.
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '$ARGUMENTS'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '$ARGUMENTS'
 ```
 
 ## Common Uses

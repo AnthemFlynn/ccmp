@@ -14,7 +14,7 @@ Use the **performance-debugger agent** for this task.
 
 1. **Page Load Timing**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
      const t = performance.timing;
      return {
        firstByte: t.responseStart - t.navigationStart,
@@ -27,7 +27,7 @@ Use the **performance-debugger agent** for this task.
 
 2. **DOM Analysis**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
      const all = document.querySelectorAll("*");
      return {
        totalElements: all.length,
@@ -40,12 +40,12 @@ Use the **performance-debugger agent** for this task.
 
 3. **Large Resources**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'performance.getEntriesByType("resource").filter(r => r.transferSize > 50000).map(r => ({ name: r.name.split("/").pop(), kb: (r.transferSize/1024).toFixed(1) })).slice(0,10)'
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'performance.getEntriesByType("resource").filter(r => r.transferSize > 50000).map(r => ({ name: r.name.split("/").pop(), kb: (r.transferSize/1024).toFixed(1) })).slice(0,10)'
    ```
 
 4. **Screenshot** for context:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
    ```
 
 ## Report

@@ -25,37 +25,37 @@ You are an expert JavaScript debugger specializing in diagnosing and fixing runt
 
 ```bash
 # Watch console for errors in real-time
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors --watch
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors --watch
 
 # Or get current errors
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
 ```
 
 ### 2. Diagnostic Queries
 
 **Check if function exists:**
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'typeof functionName'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'typeof functionName'
 ```
 
 **Check if element exists:**
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR") !== null'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR") !== null'
 ```
 
 **Inspect global state:**
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'Object.keys(window).filter(k => !k.startsWith("webkit"))'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'Object.keys(window).filter(k => !k.startsWith("webkit"))'
 ```
 
 **Check localStorage:**
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'Object.fromEntries(Object.entries(localStorage))'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'Object.fromEntries(Object.entries(localStorage))'
 ```
 
 **Test event listener:**
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR").click()'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'document.querySelector("SELECTOR").click()'
 ```
 
 ### 3. Common Error Patterns

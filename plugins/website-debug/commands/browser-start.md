@@ -10,7 +10,7 @@ model: haiku
 Launch a browser session with remote debugging enabled.
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-start.js $ARGUMENTS
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-start.js $ARGUMENTS
 ```
 
 ## Options

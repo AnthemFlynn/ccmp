@@ -18,7 +18,7 @@ Use the **css-debugger agent** for this task.
 
 2. **Gather information**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js '(() => {
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js '(() => {
      const el = document.querySelector("SELECTOR");
      if (!el) return "Element not found";
      const s = getComputedStyle(el);
@@ -45,7 +45,7 @@ Use the **css-debugger agent** for this task.
 
 3. **Take screenshot** to see current state:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
    ```
 
 4. **Analyze the issue** based on:

@@ -13,27 +13,27 @@ Start a comprehensive debugging session for a webpage.
 
 1. **Start browser** (if not already running):
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-start.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-start.js
    ```
 
 2. **Navigate to URL** (use $ARGUMENTS if provided, otherwise ask):
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-nav.js "$ARGUMENTS"
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-nav.js "$ARGUMENTS"
    ```
 
 3. **Take initial screenshot**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-screenshot.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-screenshot.js
    ```
 
 4. **Check for JavaScript errors**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
    ```
 
 5. **Get page summary**:
    ```bash
-   node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-dom.js
+   node ~/.claude/plugins/*/skills/website-debug/scripts/browser-dom.js
    ```
 
 6. **Analyze the screenshot** visually and report:

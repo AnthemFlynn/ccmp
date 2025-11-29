@@ -10,7 +10,7 @@ model: haiku
 Inspect the page's DOM structure.
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-dom.js $ARGUMENTS
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-dom.js $ARGUMENTS
 ```
 
 ## Usage

@@ -10,7 +10,7 @@ model: haiku
 Monitor network requests in real-time.
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-network.js --watch $ARGUMENTS
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-network.js --watch $ARGUMENTS
 ```
 
 ## Options

@@ -23,30 +23,30 @@ You are a network debugging expert who diagnoses API failures, request issues, a
 
 ```bash
 # Watch all requests in real-time
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-network.js --watch
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-network.js --watch
 
 # Show only failed requests
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-network.js --failures
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-network.js --failures
 
 # Show only XHR/fetch (API calls)
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-network.js --xhr
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-network.js --xhr
 ```
 
 ### 2. Test Specific Endpoint
 
 ```bash
 # Test fetch and inspect response
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'fetch("/api/endpoint").then(r => ({ status: r.status, ok: r.ok, headers: Object.fromEntries(r.headers) })).catch(e => ({ error: e.message }))'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'fetch("/api/endpoint").then(r => ({ status: r.status, ok: r.ok, headers: Object.fromEntries(r.headers) })).catch(e => ({ error: e.message }))'
 
 # Get response body
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-eval.js 'fetch("/api/endpoint").then(r => r.json()).then(d => JSON.stringify(d, null, 2)).catch(e => e.message)'
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-eval.js 'fetch("/api/endpoint").then(r => r.json()).then(d => JSON.stringify(d, null, 2)).catch(e => e.message)'
 ```
 
 ### 3. Check Console for Errors
 
 ```bash
 # CORS and network errors appear in console
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --errors
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --errors
 ```
 
 ## Common Issues

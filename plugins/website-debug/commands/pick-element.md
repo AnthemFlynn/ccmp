@@ -14,7 +14,7 @@ Launch the interactive element picker so the user can click on DOM elements.
 Run the picker with the provided message (or default):
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-pick.js "$ARGUMENTS"
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-pick.js "$ARGUMENTS"
 ```
 
 If no message provided, use: "Select the element you want to debug"

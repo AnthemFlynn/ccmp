@@ -10,7 +10,7 @@ model: haiku
 Monitor browser console output in real-time.
 
 ```bash
-node ~/.claude/plugins/**/website-debug/skills/website-debug/scripts/browser-console.js --watch $ARGUMENTS
+node ~/.claude/plugins/*/skills/website-debug/scripts/browser-console.js --watch $ARGUMENTS
 ```
 
 ## Options
