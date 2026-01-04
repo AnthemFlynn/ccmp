@@ -37,3 +37,6 @@ temp/
 __pycache__/
 *.pyc
 *.pyo
+
+# Git worktrees
+.worktrees/
