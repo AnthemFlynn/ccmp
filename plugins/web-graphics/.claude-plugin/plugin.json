@@ -1,0 +1,35 @@
+{
+  "name": "web-graphics",
+  "version": "2.0.0",
+  "description": "Production-ready 3D web graphics toolkit. Four specialized skills for Three.js (WebGPU), React Three Fiber, asset pipeline optimization, and graphics troubleshooting. Includes decision frameworks, scenario patterns, and 2026 best practices.",
+  "author": {
+    "name": "Anthem",
+    "email": "AnthemFlynn@users.noreply.github.com"
+  },
+  "repository": "https://github.com/AnthemFlynn/ccmp",
+  "license": "MIT",
+  "keywords": [
+    "threejs",
+    "webgpu",
+    "webgl",
+    "react-three-fiber",
+    "r3f",
+    "drei",
+    "3d",
+    "graphics",
+    "tsl",
+    "shaders",
+    "visualization",
+    "animation",
+    "game-development",
+    "interactive",
+    "asset-pipeline",
+    "gltf",
+    "meshopt",
+    "ktx2",
+    "physics",
+    "rapier",
+    "troubleshooting",
+    "web"
+  ]
+}
