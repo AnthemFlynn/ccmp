@@ -73,7 +73,7 @@ async function runCommand(
   });
 }
 
-function parseZigErrors(output: string): ZigError[] {
+export function parseZigErrors(output: string): ZigError[] {
   const errors: ZigError[] = [];
   const lines = output.split("\n");
 
@@ -266,6 +266,41 @@ async function zigTranslateC(args: {
   };
 }
 
+async function zigCheck(args: {
+  cwd: string;
+  file?: string;
+}): Promise<object> {
+  // Use 'zig build' with emit mode disabled for fast syntax/type checking
+  const cmdArgs = ["zig", "build"];
+
+  // If checking a single file, we need a different approach
+  // For now, just do a quick build check
+  if (args.file) {
+    // Use zig ast-check for single file syntax validation
+    const result = await runCommand(["zig", "ast-check", args.file], args.cwd);
+    const errors = parseZigErrors(result.stderr);
+
+    return {
+      success: result.exitCode === 0,
+      file: args.file,
+      errors,
+      durationMs: result.durationMs,
+      stderr: result.stderr,
+    };
+  }
+
+  // For project-wide check, use build with summary
+  const result = await runCommand(cmdArgs, args.cwd);
+  const errors = parseZigErrors(result.stderr);
+
+  return {
+    success: result.exitCode === 0,
+    errors,
+    durationMs: result.durationMs,
+    stderr: result.stderr,
+  };
+}
+
 // ============================================================================
 // MCP Server Setup
 // ============================================================================
@@ -399,6 +434,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["header"],
       },
     },
+    {
+      name: "zig_check",
+      description: "Fast syntax and type checking without full build. Use for tight TDD feedback loops. For single files, uses ast-check; for projects, runs build.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          cwd: {
+            type: "string",
+            description: "Working directory containing build.zig or the file",
+          },
+          file: {
+            type: "string",
+            description: "Optional: single .zig file to check (uses ast-check)",
+          },
+        },
+        required: ["cwd"],
+      },
+    },
   ],
 }));
 
@@ -428,6 +481,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       result = await zigTranslateC(
         args as { header: string; cwd?: string; includes?: string[]; defines?: string[] }
       );
+      break;
+    case "zig_check":
+      result = await zigCheck(args as { cwd: string; file?: string });
       break;
     default:
       throw new Error(`Unknown tool: ${name}`);

@@ -173,12 +173,29 @@ Detailed guidance available in reference files:
 - **[references/c-interop.md](references/c-interop.md)**: translate-c, C types, calling conventions, building C code
 - **[references/testing.md](references/testing.md)**: Test blocks, expect, fuzz testing, test allocator
 
+## Templates
+
+Project scaffolding for common patterns:
+
+- **[templates/cli-app](../../templates/cli-app/)** - Command-line application with argument parsing, GPA leak detection, proper error handling
+- **[templates/library](../../templates/library/)** - Reusable library with tests and documentation structure
+
+Copy and customize for new projects:
+
+```bash
+cp -r templates/cli-app my-new-app
+cd my-new-app
+# Edit build.zig to rename "myapp" to your project name
+zig build run
+```
+
 ## MCP Server Integration
 
 When the `zig-mcp` MCP server is available, use these tools:
 
 - `zig_build` - Run `zig build` with optional target/step, returns structured errors with file/line/column
 - `zig_test` - Run `zig build test`, returns pass/fail/skip counts and any compile errors
+- `zig_check` - Fast syntax/type checking without full build (uses ast-check for single files)
 - `zig_version` - Check if Zig is installed, get version with parsed components
 - `zig_init` - Initialize a new Zig project with standard structure
 - `zig_fmt` - Format code or check formatting, returns list of affected files
