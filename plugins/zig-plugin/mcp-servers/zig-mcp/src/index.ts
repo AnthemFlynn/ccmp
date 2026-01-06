@@ -266,6 +266,130 @@ async function zigTranslateC(args: {
   };
 }
 
+// ============================================================================
+// ZVM/ZLS Tool Implementations
+// ============================================================================
+
+async function zvmInstall(args: {
+  version: string;
+  withZls?: boolean;
+  force?: boolean;
+}): Promise<object> {
+  const cmdArgs = ["zvm", "i", args.version];
+  if (args.withZls !== false) cmdArgs.push("--zls");
+  if (args.force) cmdArgs.push("-f");
+
+  const result = await runCommand(cmdArgs);
+
+  return {
+    success: result.exitCode === 0,
+    version: args.version,
+    zlsInstalled: args.withZls !== false,
+    stdout: result.stdout,
+    stderr: result.stderr,
+    durationMs: result.durationMs,
+  };
+}
+
+async function zvmUse(args: { version: string }): Promise<object> {
+  const result = await runCommand(["zvm", "use", args.version]);
+
+  return {
+    success: result.exitCode === 0,
+    activeVersion: args.version,
+    stdout: result.stdout,
+    stderr: result.stderr,
+  };
+}
+
+export function parseZvmList(output: string): { installed: string[]; active: string | null } {
+  const lines = output.split("\n").filter((l) => l.trim());
+  const installed: string[] = [];
+  let active: string | null = null;
+
+  for (const line of lines) {
+    // ZVM marks active version with arrow or asterisk
+    const isActive = line.includes("*") || line.includes("←") || line.includes("<-");
+    // Clean up the version string - remove markers and whitespace
+    const version = line.replace(/[*←<>\s]/g, "").replace(/-$/, "").trim();
+    if (version && !version.includes("---")) {
+      installed.push(version);
+      if (isActive) active = version;
+    }
+  }
+
+  return { installed, active };
+}
+
+async function zvmList(): Promise<object> {
+  const result = await runCommand(["zvm", "ls"]);
+
+  if (result.exitCode !== 0) {
+    return {
+      success: false,
+      installed: [],
+      active: null,
+      error: result.stderr || "ZVM not found",
+    };
+  }
+
+  const parsed = parseZvmList(result.stdout);
+
+  return {
+    success: true,
+    ...parsed,
+  };
+}
+
+async function zlsStatus(): Promise<object> {
+  // Check ZLS
+  const zlsResult = await runCommand(["zls", "--version"]);
+  const zigResult = await runCommand(["zig", "version"]);
+
+  if (zlsResult.exitCode !== 0) {
+    return {
+      installed: false,
+      path: null,
+      version: null,
+      compatible: false,
+      zigVersion: zigResult.stdout.trim() || null,
+      error: "ZLS not found in PATH",
+    };
+  }
+
+  // Get ZLS path
+  const whichResult = await runCommand(["which", "zls"]);
+  const zlsPath = whichResult.stdout.trim();
+  const zlsVersion = zlsResult.stdout.trim();
+  const zigVersion = zigResult.stdout.trim();
+
+  // Check compatibility - versions should match for nightly
+  // For tagged releases, major.minor should match
+  const compatible = zlsVersion.includes(zigVersion.split(".").slice(0, 2).join("."));
+
+  return {
+    installed: true,
+    path: zlsPath,
+    version: zlsVersion,
+    compatible,
+    zigVersion,
+  };
+}
+
+async function zigFetch(args: { url: string; cwd: string }): Promise<object> {
+  const result = await runCommand(["zig", "fetch", "--save", args.url], args.cwd);
+
+  // Extract hash from output if successful
+  const hashMatch = result.stdout.match(/([a-f0-9]{64})/i);
+
+  return {
+    success: result.exitCode === 0,
+    hash: hashMatch ? hashMatch[1] : null,
+    stdout: result.stdout,
+    stderr: result.stderr,
+  };
+}
+
 async function zigCheck(args: {
   cwd: string;
   file?: string;
@@ -452,6 +576,77 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["cwd"],
       },
     },
+    // ZVM Tools
+    {
+      name: "zvm_install",
+      description: "Install a Zig version using ZVM (Zig Version Manager). Optionally installs matching ZLS.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          version: {
+            type: "string",
+            description: "Zig version to install (e.g., 'master', '0.13.0')",
+          },
+          withZls: {
+            type: "boolean",
+            description: "Install matching ZLS version (default: true for master/nightly)",
+          },
+          force: {
+            type: "boolean",
+            description: "Force reinstall even if already installed",
+          },
+        },
+        required: ["version"],
+      },
+    },
+    {
+      name: "zvm_use",
+      description: "Switch to a different installed Zig version.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          version: {
+            type: "string",
+            description: "Version to activate",
+          },
+        },
+        required: ["version"],
+      },
+    },
+    {
+      name: "zvm_list",
+      description: "List all installed Zig versions and show which is active.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {},
+      },
+    },
+    {
+      name: "zls_status",
+      description: "Check ZLS (Zig Language Server) installation status and compatibility with current Zig version.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {},
+      },
+    },
+    {
+      name: "zig_fetch",
+      description: "Add a dependency to build.zig.zon using zig fetch --save.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          url: {
+            type: "string",
+            description: "Package URL (e.g., GitHub tarball URL)",
+          },
+          cwd: {
+            type: "string",
+            description: "Project directory containing build.zig.zon",
+          },
+        },
+        required: ["url", "cwd"],
+      },
+    },
   ],
 }));
 
@@ -484,6 +679,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       break;
     case "zig_check":
       result = await zigCheck(args as { cwd: string; file?: string });
+      break;
+    case "zvm_install":
+      result = await zvmInstall(args as { version: string; withZls?: boolean; force?: boolean });
+      break;
+    case "zvm_use":
+      result = await zvmUse(args as { version: string });
+      break;
+    case "zvm_list":
+      result = await zvmList();
+      break;
+    case "zls_status":
+      result = await zlsStatus();
+      break;
+    case "zig_fetch":
+      result = await zigFetch(args as { url: string; cwd: string });
       break;
     default:
       throw new Error(`Unknown tool: ${name}`);

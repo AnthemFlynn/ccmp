@@ -1,0 +1,25 @@
+{
+  "lsp": {
+    "zls": {
+      "binary": {
+        "path": "~/.zvm/bin/zls"
+      },
+      "settings": {
+        "enable_autofix": true,
+        "enable_snippets": true,
+        "warn_style": true
+      }
+    }
+  },
+  "languages": {
+    "Zig": {
+      "tab_size": 4,
+      "formatter": {
+        "external": {
+          "command": "zig",
+          "arguments": ["fmt", "--stdin"]
+        }
+      }
+    }
+  }
+}

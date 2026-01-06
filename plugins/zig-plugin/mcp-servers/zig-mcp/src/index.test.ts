@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { parseZigErrors } from "./index";
+import { parseZigErrors, parseZvmList } from "./index";
 
 describe("parseZigErrors", () => {
   test("parses standard error format", () => {
@@ -95,5 +95,64 @@ Compilation failed`;
 
     expect(errors).toHaveLength(1);
     expect(errors[0].message).toBe("undefined");
+  });
+});
+
+describe("parseZvmList", () => {
+  test("parses simple version list", () => {
+    const output = `0.11.0
+0.12.0
+0.13.0`;
+    const result = parseZvmList(output);
+
+    expect(result.installed).toEqual(["0.11.0", "0.12.0", "0.13.0"]);
+    expect(result.active).toBeNull();
+  });
+
+  test("identifies active version with asterisk", () => {
+    const output = `0.11.0
+0.12.0 *
+0.13.0`;
+    const result = parseZvmList(output);
+
+    expect(result.installed).toHaveLength(3);
+    expect(result.active).toBe("0.12.0");
+  });
+
+  test("identifies active version with arrow", () => {
+    const output = `0.11.0
+0.12.0 ←
+master`;
+    const result = parseZvmList(output);
+
+    expect(result.active).toBe("0.12.0");
+  });
+
+  test("handles master/nightly versions", () => {
+    const output = `0.13.0
+master *`;
+    const result = parseZvmList(output);
+
+    expect(result.installed).toContain("master");
+    expect(result.active).toBe("master");
+  });
+
+  test("handles empty output", () => {
+    const result = parseZvmList("");
+
+    expect(result.installed).toEqual([]);
+    expect(result.active).toBeNull();
+  });
+
+  test("handles output with decorative lines", () => {
+    const output = `---installed---
+0.12.0
+0.13.0 *
+---default---`;
+    const result = parseZvmList(output);
+
+    // Should ignore lines with dashes
+    expect(result.installed).toEqual(["0.12.0", "0.13.0"]);
+    expect(result.active).toBe("0.13.0");
   });
 });

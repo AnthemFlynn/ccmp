@@ -24,6 +24,39 @@ Zig's design principles that must inform all code generation:
 4. **Errors are values** - Error unions, not exceptions
 5. **Comptime over runtime** - Move work to compile time when possible
 
+## Toolchain Management
+
+### Version Strategy
+
+- Use `master` (nightly) for latest features until Zig 1.0
+- ZLS must match Zig version exactly (nightly↔nightly, tagged↔tagged)
+- ZVM's `--zls` flag keeps them in sync automatically
+
+### Common Operations
+
+```bash
+# First-time setup
+zvm i master --zls
+
+# Update to latest nightly
+zvm i master --zls -f
+
+# Switch versions
+zvm use 0.13.0
+
+# Check health
+/zig-doctor
+```
+
+### Auto-Checks (Before Any Zig Task)
+
+When working in a Zig project, automatically verify:
+- `zig version` succeeds
+- ZLS responds (if editing in Zed)
+- build.zig exists and parses
+
+If any fail, run `/zig-doctor` before proceeding.
+
 ## Quick Reference
 
 ### Project Structure
@@ -166,12 +199,18 @@ fn runtimeSized(allocator: Allocator, size: usize) ![]u8 {
 
 Detailed guidance available in reference files:
 
+### Core Concepts
 - **[references/allocators.md](references/allocators.md)**: Deep dive on allocator patterns, arena strategies, custom allocators
 - **[references/comptime.md](references/comptime.md)**: Type-level programming, @typeInfo, @Type, comptime algorithms
 - **[references/build-system.md](references/build-system.md)**: build.zig mastery, cross-compilation, C integration
 - **[references/error-handling.md](references/error-handling.md)**: Error sets, errdefer, error traces, panic handling
 - **[references/c-interop.md](references/c-interop.md)**: translate-c, C types, calling conventions, building C code
 - **[references/testing.md](references/testing.md)**: Test blocks, expect, fuzz testing, test allocator
+
+### Toolchain & Editor
+- **[references/zvm.md](references/zvm.md)**: ZVM installation, version management, troubleshooting
+- **[references/zls.md](references/zls.md)**: ZLS configuration, editor integration, diagnostics
+- **[references/zed-integration.md](references/zed-integration.md)**: Zed-specific setup for ZVM-managed ZLS
 
 ## Templates
 
@@ -193,13 +232,23 @@ zig build run
 
 When the `zig-mcp` MCP server is available, use these tools:
 
+### Build Tools
 - `zig_build` - Run `zig build` with optional target/step, returns structured errors with file/line/column
 - `zig_test` - Run `zig build test`, returns pass/fail/skip counts and any compile errors
 - `zig_check` - Fast syntax/type checking without full build (uses ast-check for single files)
+- `zig_fmt` - Format code or check formatting, returns list of affected files
+
+### Project Tools
 - `zig_version` - Check if Zig is installed, get version with parsed components
 - `zig_init` - Initialize a new Zig project with standard structure
-- `zig_fmt` - Format code or check formatting, returns list of affected files
+- `zig_fetch` - Add dependency to build.zig.zon using `zig fetch --save`
 - `zig_translate_c` - Convert C headers to Zig declarations
+
+### Toolchain Tools (ZVM/ZLS)
+- `zvm_install` - Install Zig version with optional matching ZLS
+- `zvm_use` - Switch active Zig version
+- `zvm_list` - List installed versions and show active
+- `zls_status` - Check ZLS installation and version compatibility
 
 ## Workflow Integration
 
