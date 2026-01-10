@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { parseZigErrors, parseZvmList } from "./index";
+import { parseZigErrors, parseZvmList, checkVersionCompatibility } from "./index";
 
 describe("parseZigErrors", () => {
   test("parses standard error format", () => {
@@ -154,5 +154,38 @@ master *`;
     // Should ignore lines with dashes
     expect(result.installed).toEqual(["0.12.0", "0.13.0"]);
     expect(result.active).toBe("0.13.0");
+  });
+});
+
+describe("checkVersionCompatibility", () => {
+  test("stable versions with matching major.minor are compatible", () => {
+    expect(checkVersionCompatibility("0.13.0", "0.13.0")).toBe(true);
+    expect(checkVersionCompatibility("0.13.0", "0.13.1")).toBe(true);
+    expect(checkVersionCompatibility("0.13.1", "0.13.0")).toBe(true);
+  });
+
+  test("stable versions with different major.minor are incompatible", () => {
+    expect(checkVersionCompatibility("0.13.0", "0.12.0")).toBe(false);
+    expect(checkVersionCompatibility("0.14.0", "0.13.0")).toBe(false);
+    expect(checkVersionCompatibility("1.0.0", "0.13.0")).toBe(false);
+  });
+
+  test("dev versions with matching base are compatible", () => {
+    expect(checkVersionCompatibility("0.14.0-dev.1234", "0.14.0-dev.5678")).toBe(true);
+    expect(checkVersionCompatibility("0.14.0-dev.100", "0.14.0-dev.200")).toBe(true);
+  });
+
+  test("dev versions with different base are incompatible", () => {
+    expect(checkVersionCompatibility("0.14.0-dev.1234", "0.13.0-dev.5678")).toBe(false);
+    expect(checkVersionCompatibility("0.15.0-dev.100", "0.14.0-dev.200")).toBe(false);
+  });
+
+  test("mixing stable and dev versions is incompatible", () => {
+    expect(checkVersionCompatibility("0.14.0", "0.14.0-dev.1234")).toBe(false);
+    expect(checkVersionCompatibility("0.14.0-dev.1234", "0.14.0")).toBe(false);
+  });
+
+  test("handles master version string", () => {
+    expect(checkVersionCompatibility("0.14.0-dev.1234", "0.14.0-dev.1234")).toBe(true);
   });
 });

@@ -35,11 +35,15 @@ interface CommandResult {
 // Zig Command Execution
 // ============================================================================
 
+const DEFAULT_TIMEOUT_MS = 60000; // 1 minute default
+
 async function runCommand(
   args: string[],
-  cwd?: string
+  cwd?: string,
+  timeoutMs?: number
 ): Promise<CommandResult> {
   const start = Date.now();
+  const timeout = timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
   return new Promise((resolve) => {
     const proc = spawn(args[0], args.slice(1), {
@@ -49,20 +53,31 @@ async function runCommand(
 
     let stdout = "";
     let stderr = "";
+    let killed = false;
+
+    // Set up timeout
+    const timer = setTimeout(() => {
+      killed = true;
+      proc.kill("SIGTERM");
+      // Force kill after 5s if still running
+      setTimeout(() => proc.kill("SIGKILL"), 5000);
+    }, timeout);
 
     proc.stdout.on("data", (data) => (stdout += data.toString()));
     proc.stderr.on("data", (data) => (stderr += data.toString()));
 
     proc.on("close", (code) => {
+      clearTimeout(timer);
       resolve({
         stdout,
-        stderr,
-        exitCode: code ?? 1,
+        stderr: killed ? `Command timed out after ${timeout}ms\n${stderr}` : stderr,
+        exitCode: killed ? 124 : (code ?? 1), // 124 = timeout exit code (like GNU timeout)
         durationMs: Date.now() - start,
       });
     });
 
     proc.on("error", (err) => {
+      clearTimeout(timer);
       resolve({
         stdout: "",
         stderr: err.message,
@@ -341,6 +356,31 @@ async function zvmList(): Promise<object> {
   };
 }
 
+export function checkVersionCompatibility(zigVersion: string, zlsVersion: string): boolean {
+  // For dev versions like "0.14.0-dev.1234", extract base version
+  const extractBase = (v: string) => {
+    const match = v.match(/^(\d+\.\d+\.\d+)/);
+    return match ? match[1] : v;
+  };
+
+  const zigBase = extractBase(zigVersion);
+  const zlsBase = extractBase(zlsVersion);
+
+  // For nightly/dev builds, base versions should match exactly
+  const zigIsDev = zigVersion.includes("-dev") || zigVersion.includes("master");
+  const zlsIsDev = zlsVersion.includes("-dev") || zlsVersion.includes("master");
+
+  if (zigIsDev || zlsIsDev) {
+    // Both should be dev builds with matching base version
+    return zigBase === zlsBase && zigIsDev === zlsIsDev;
+  }
+
+  // For stable releases, major.minor should match
+  const zigParts = zigBase.split(".");
+  const zlsParts = zlsBase.split(".");
+  return zigParts[0] === zlsParts[0] && zigParts[1] === zlsParts[1];
+}
+
 async function zlsStatus(): Promise<object> {
   // Check ZLS
   const zlsResult = await runCommand(["zls", "--version"]);
@@ -357,15 +397,15 @@ async function zlsStatus(): Promise<object> {
     };
   }
 
-  // Get ZLS path
-  const whichResult = await runCommand(["which", "zls"]);
-  const zlsPath = whichResult.stdout.trim();
+  // Get ZLS path - use 'where' on Windows, 'which' on Unix
+  const isWindows = process.platform === "win32";
+  const whichCmd = isWindows ? "where" : "which";
+  const whichResult = await runCommand([whichCmd, "zls"]);
+  const zlsPath = whichResult.stdout.trim().split("\n")[0]; // 'where' may return multiple lines
   const zlsVersion = zlsResult.stdout.trim();
   const zigVersion = zigResult.stdout.trim();
 
-  // Check compatibility - versions should match for nightly
-  // For tagged releases, major.minor should match
-  const compatible = zlsVersion.includes(zigVersion.split(".").slice(0, 2).join("."));
+  const compatible = checkVersionCompatibility(zigVersion, zlsVersion);
 
   return {
     installed: true,

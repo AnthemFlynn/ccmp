@@ -80,7 +80,20 @@ fi
 # Verify server can start
 echo ""
 echo "Verifying MCP server..."
-if timeout 2 bun run src/index.ts 2>&1 | grep -q "running"; then
+# Use portable timeout approach (works on macOS and Linux)
+verify_server() {
+    bun run src/index.ts 2>&1 &
+    local pid=$!
+    sleep 2
+    if kill -0 $pid 2>/dev/null; then
+        kill $pid 2>/dev/null
+        wait $pid 2>/dev/null
+        return 0
+    fi
+    return 1
+}
+
+if verify_server | grep -q "running"; then
     echo "✓ MCP server verified"
 else
     echo "⚠️  Could not verify server (may still work)"
