@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "if [[ \"$TOOL_INPUT\" == *\".zig\"* ]]; then zig fmt \"$FILE_PATH\" 2>/dev/null || true; fi"
+      }
+    ]
+  }
+}

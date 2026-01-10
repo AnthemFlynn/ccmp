@@ -142,6 +142,53 @@
       },
       "repository": "https://github.com/AnthemFlynn/ccmp",
       "license": "MIT"
+    },
+    {
+      "name": "web-graphics",
+      "source": "./plugins/web-graphics",
+      "description": "Web graphics development toolkit with Three.js for creating 3D scenes, WebGL applications, interactive visualizations, and browser-based 3D content.",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": [
+        "threejs",
+        "3d",
+        "webgl",
+        "graphics",
+        "visualization",
+        "animation",
+        "shaders",
+        "game-development",
+        "interactive"
+      ],
+      "author": {
+        "name": "Anthem",
+        "email": "AnthemFlynn@users.noreply.github.com"
+      },
+      "repository": "https://github.com/AnthemFlynn/ccmp",
+      "license": "MIT"
+    },
+    {
+      "name": "zig-plugin",
+      "source": "./plugins/zig-plugin",
+      "description": "Comprehensive Zig development support with ZVM, ZLS, and MCP tools for building, testing, and managing Zig projects. Optimized for Claude Code + Zed workflow.",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": [
+        "zig",
+        "zvm",
+        "zls",
+        "systems-programming",
+        "comptime",
+        "allocators",
+        "build-system",
+        "language-server"
+      ],
+      "author": {
+        "name": "Anthem",
+        "email": "AnthemFlynn@users.noreply.github.com"
+      },
+      "repository": "https://github.com/AnthemFlynn/ccmp",
+      "license": "MIT"
     }
   ]
 }
